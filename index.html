@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Avaliação dos OKRs 2026 | Fortes Tecnologia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f4f0;--card:#ffffff;--line:#e0dfd8;--ink:#23222b;--muted:#6b6a72;--soft:#f0eef8;
+  --pri:#533AB7;--pri-ink:#ffffff;--ok:#1D9E75;--bad:#E24B4A;--warn:#BA7517;--off:#9a99a0;
+  --ok-bg:#e6f5ef;--bad-bg:#fcebeb;--off-bg:#efefef;
+  color-scheme:light;box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#17161c;--card:#211f28;--line:#34323d;--ink:#ecebf2;--muted:#a3a1ad;--soft:#2a2735;
+  --pri:#8b75e8;--pri-ink:#17161c;--ok:#3cc596;--bad:#f07170;--warn:#e0a24a;--off:#7f7d88;
+  --ok-bg:#183229;--bad-bg:#3a1f22;--off-bg:#2b2a31;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#17161c;--card:#211f28;--line:#34323d;--ink:#ecebf2;--muted:#a3a1ad;--soft:#2a2735;
+  --pri:#8b75e8;--pri-ink:#17161c;--ok:#3cc596;--bad:#f07170;--warn:#e0a24a;--off:#7f7d88;
+  --ok-bg:#183229;--bad-bg:#3a1f22;--off-bg:#2b2a31;color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+h1,h2,h3{font-family:Sora,Inter,system-ui,sans-serif;margin:0;line-height:1.3}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--pri);outline-offset:2px}
+
+.wrap{max-width:640px;margin:0 auto;padding:28px 20px 60px}
+.wide .wrap{max-width:980px}
+.sync{font-size:12px;color:var(--muted)}
+.sync[data-s="salvo"]{color:var(--ok)}.sync[data-s="erro"]{color:var(--bad);cursor:help}
+.boxes.b5{grid-template-columns:repeat(5,1fr)}
+.box .v small{font-size:14px;color:var(--muted);font-weight:500}
+.cs summary.br{grid-template-columns:minmax(150px,220px) 1fr 80px}
+small{font-size:12px;color:var(--muted)}
+.clist{list-style:none;margin:0;padding:0}
+.clist li{padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+.clist li b{font-weight:500}
+.clist li p{margin:2px 0 0;color:var(--muted);font-size:13.5px}
+@media (max-width:760px){.boxes.b5{grid-template-columns:1fr 1fr}.cs summary.br{grid-template-columns:1fr 70px}}
+.head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:13px;color:var(--muted)}
+.head b{color:var(--ink);font-weight:600}
+.prog{height:4px;background:var(--line);border-radius:4px;margin:10px 0 28px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--pri);transition:width .3s}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px}
+.ctx{font-size:13px;color:var(--muted);margin-bottom:4px}
+.ctx b{color:var(--pri);font-weight:600}
+.macro{font-size:14px;color:var(--ink);font-weight:500;padding-bottom:16px;margin-bottom:20px;border-bottom:1px solid var(--line)}
+h2{font-size:21px;font-weight:600}
+.big h2{font-size:24px}
+.desc{color:var(--muted);font-size:14px;margin:10px 0 0}
+.more{background:none;border:0;color:var(--pri);font-size:13px;padding:0;margin-top:8px;cursor:pointer}
+.plan{font-size:13px;color:var(--muted);margin-top:12px}
+
+.q{margin-top:26px}
+.ql{display:block;font-weight:500;font-size:14px;margin-bottom:8px}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{flex:1 1 0;min-width:120px;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:11px 12px;cursor:pointer;font-size:14px;text-align:center}
+.opt:hover{border-color:var(--muted)}
+.opt.on{background:var(--pri);border-color:var(--pri);color:var(--pri-ink)}
+.opt.on[data-v="Sim"]{background:var(--ok);border-color:var(--ok);color:#fff}
+.opt.on[data-v="Parcialmente"]{background:var(--warn);border-color:var(--warn);color:#fff}
+.opt.on[data-v="Não"]{background:var(--bad);border-color:var(--bad);color:#fff}
+input[type=text],input[type=number],select,textarea{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:10px 12px;font-size:14px}
+textarea{min-height:76px;resize:vertical}
+.hide{display:none}
+
+.metas{margin:18px 0 0;padding:0;list-style:none}
+.metas li{display:flex;justify-content:space-between;padding:10px 0;border-top:1px solid var(--line);font-size:14px}
+.metas li b{font-family:Sora,sans-serif;font-weight:600}
+.f{margin-top:18px}
+.hint{font-size:12.5px;color:var(--muted);margin-top:4px}
+.hint.ok{color:var(--ok)}.hint.bad{color:var(--bad)}
+
+.nav{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:24px}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:11px 22px;cursor:pointer;font-weight:500}
+.btn.pri{background:var(--pri);border-color:var(--pri);color:var(--pri-ink)}
+.btn.link{border:0;background:none;color:var(--muted);padding:11px 4px}
+.btn:disabled{visibility:hidden}
+
+.ex{display:flex;gap:8px;margin-top:10px}
+.x{background:none;border:0;color:var(--muted);cursor:pointer;font-size:20px;padding:0 8px}
+
+.boxes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px}
+.box{background:var(--bg);border-radius:10px;padding:14px}
+.box .v{font-family:Sora,sans-serif;font-size:24px;font-weight:600}
+.box .k{font-size:12.5px;color:var(--muted)}
+.sec{margin-top:26px}
+.sec h3{font-size:15px;margin-bottom:10px}
+.br{display:grid;grid-template-columns:130px 1fr 60px;gap:10px;align-items:center;font-size:13px;margin-bottom:8px}
+.bar{display:flex;height:10px;border-radius:4px;overflow:hidden;background:var(--line)}
+.bar i{display:block;height:100%}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}
+th{font-weight:500;color:var(--muted);font-size:12.5px}
+.pill{border-radius:6px;padding:2px 8px;font-size:12px;font-weight:500;white-space:nowrap}
+.pill.warn{background:var(--off-bg);color:var(--warn)}
+.nd{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-top:8px;cursor:pointer;width:fit-content}
+.nd input{width:16px;height:16px;accent-color:var(--pri);margin:0}
+input:disabled{opacity:.45}
+.pill.ok{background:var(--ok-bg);color:var(--ok)}.pill.bad{background:var(--bad-bg);color:var(--bad)}.pill.off{background:var(--off-bg);color:var(--muted)}
+.kd summary{list-style:none;cursor:pointer;border-radius:8px;padding:6px 8px;margin:0 -8px 2px}
+.kd summary::-webkit-details-marker{display:none}
+.kd summary:hover{background:var(--soft)}
+.kd summary>span:first-child::before{content:"›";display:inline-block;width:14px;color:var(--pri);transition:transform .2s}
+.kd[open] summary>span:first-child::before{transform:rotate(90deg)}
+.br.nop{padding:6px 8px 6px 22px;margin:0 -8px 2px}
+.itens{list-style:none;margin:4px 0 14px;padding:0 0 0 14px;border-left:2px solid var(--line)}
+.itens li{display:flex;gap:10px;padding:8px 0 8px 6px;cursor:pointer;border-radius:6px;font-size:13.5px}
+.itens li:hover{background:var(--soft)}
+.itens .dot{flex:0 0 10px;height:10px;border-radius:50%;margin-top:5px}
+.itens b{font-weight:500}
+.itens .tag{display:inline-block;margin-left:8px;font-size:12px;color:var(--muted)}
+.itens p{margin:2px 0 0;color:var(--muted);font-size:13px}
+.sem-acoes .boxes,.sem-acoes .sec-exec{display:none}
+.note{font-size:12.5px;color:var(--muted);margin-top:20px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .25s;pointer-events:none}
+.toast.show{opacity:1}
+.screen{animation:in .25s ease-out}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (max-width:560px){.card{padding:22px}.boxes{grid-template-columns:1fr 1fr}.br{grid-template-columns:1fr 50px}.br .bar{grid-column:1/-1;order:3}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.head .r{display:flex;align-items:center;gap:10px}
+.icon{border:1px solid var(--line);background:var(--card);border-radius:8px;width:34px;height:34px;display:grid;place-items:center;cursor:pointer;padding:0}
+.icon svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8}
+.setlink{background:none;border:0;color:var(--pri);cursor:pointer;font-size:13px;padding:0}
+.sets{display:grid;gap:10px;margin-top:22px}
+.set{display:flex;justify-content:space-between;align-items:center;gap:12px;text-align:left;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:16px 18px;cursor:pointer}
+.set:hover{border-color:var(--pri)}
+.set b{font-family:Sora,sans-serif;font-weight:600;font-size:16px;display:block}
+.set span{font-size:13px;color:var(--muted)}
+.set .st{font-size:12.5px;white-space:nowrap;text-align:right;color:var(--muted)}
+.obs{font-size:13px;background:var(--soft);border-radius:8px;padding:8px 12px;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head"><span><b>Avaliação dos OKRs 2026</b>, <span id="titulo"></span> <button class="setlink hide" id="trocar">Trocar setor</button></span><span class="r"><span id="sync" class="sync"></span><span id="pos"></span><button class="icon" id="tema" type="button"></button></span></div>
+  <div class="prog"><i id="bar"></i></div>
+  <div id="screen"></div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+/* ===== CONFIGURAÇÃO DO SUPABASE: cole aqui a URL e a chave anon do projeto ===== */
+const SUPABASE_URL="COLE_AQUI_A_URL_DO_PROJETO";
+const SUPABASE_ANON_KEY="COLE_AQUI_A_CHAVE_ANON";
+const CICLO="2026";
+/* ================================================================================ */
+let sb=null,REMOTO={};
+try{if(window.supabase&&/^https:\/\//.test(SUPABASE_URL))sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);}catch(e){}
+function syncStatus(t){const e=document.getElementById("sync");if(!e||!sb)return;e.dataset.s=t;e.textContent={salvando:"Salvando...",salvo:"Salvo",erro:"Erro ao salvar",carregando:"Carregando..."}[t]||"";e.title=t==="erro"?"Não foi possível salvar no banco. As respostas continuam guardadas neste navegador.":"";}
+async function baixarTudo(){if(!sb)return;syncStatus("carregando");
+ const {data,error}=await sb.from("okr_avaliacoes").select("setor,respostas").eq("ciclo",CICLO);
+ if(error){syncStatus("erro");return;}REMOTO={};(data||[]).forEach(r=>{REMOTO[r.setor]=r.respostas;});syncStatus("salvo");}
+const DATA = {"suporte": [{"k": 0, "p": "Projeto Neo", "t": "Plataforma de atendimento omnichannel Neo", "d": "Integrar canais (telefone, WhatsApp, e-mail, chat e central de conteúdos).", "r": "Síndel", "q": "1º Trimestre", "o": "", "id": "s1", "st": "Em Andamento"}, {"k": 0, "p": "Projeto Neo", "t": "Treinar equipe para uso completo do Neo (dashboards, triagem, atendimentos simultâneos, fila em tempo real)", "d": "", "r": "Síndel", "q": "1º Trimestre", "o": "", "id": "s2", "st": "Em Andamento"}, {"k": 0, "p": "Projeto Neo", "t": "Parametrizar o Neo: horários, SLAs, filas e fluxos", "d": "Gestão: Parametrizar horários, SLAs, regras de fila e fluxos de atendimento. Validar registros automáticos de protocolos e históricos do cliente.", "r": "Letícia", "q": "1º Trimestre", "o": "", "id": "s3", "st": "Em Andamento"}, {"k": 0, "p": "Atendimento Inteligente", "t": "IA para processos administrativos", "d": "Atualização cadastral; Consulta a status de chamados.", "r": "Síndel", "q": "2º Trimestre", "o": "", "id": "s4", "st": "À iniciar"}, {"k": 0, "p": "Atendimento Inteligente", "t": "Configurar IA para atendimentos básicos e FAQs", "d": "Configurar IA para atendimentos básicos e FAQs Respostas automáticas para: Problemas simples e recorrentes; Passo a passo de funcionalidades Erros comuns de operação. Treinar a IA com top 20 motivos de atendimento Medir taxa de deflexão (atendimentos resolvidos sem ir para o analista)", "r": "Síndel", "q": "4º Trimestre", "o": "", "id": "s5", "st": "À iniciar"}, {"k": 1, "p": "Projeto Qualidade", "t": "Criar rotina semanal e mensal de análise dos detratores (CSAT < 4) com plano de ação para cada caso", "d": "", "r": "Lucas", "q": "2º Trimestre", "o": "", "id": "s6", "st": "À iniciar"}, {"k": 1, "p": "Projeto Qualidade", "t": "Desenvolver relatório mensal com insights de CSAT por técnico, para decisões de melhoria contínua", "d": "Feedbacks para os técnicos em tempo real.", "r": "Lucas", "q": "2º Trimestre", "o": "", "id": "s7", "st": "À iniciar"}, {"k": 1, "p": "Padrão FanFortes", "t": "Playbook do atendimento com scripts e processos para casos recorrentes", "d": "Criar scripts claros para situações de alta frustração, demandas urgentes, erros comuns. Revisar e atualizar esses scripts trimestralmente. Padronizar respostas e fluxos para reduzir ruído, retrabalho e inconsistências.", "r": "Síndel", "q": "4º Trimestre", "o": "", "id": "s8", "st": "À iniciar"}, {"k": 3, "p": "Logística & Operações", "t": "Criar ranking de priorização de clientes", "d": "Criar ranking de priorização: Identificar clientes por risco, faturamento, novos clientes, baixa usabilidade e alta demanda no suporte. Definir previsão de ordem de visitas/ligações trimestral.", "r": "Karina", "q": "1º Trimestre", "o": "", "id": "s9", "st": "Em Andamento"}, {"k": 3, "p": "Logística & Operações", "t": "Criar mapa geográfico da base contábil", "d": "Criar sistemática de visitas por região para otimizar deslocamento. Priorizar clusters geográficos para reduzir custos e aumentar cobertura.", "r": "Karina", "q": "1º Trimestre", "o": "", "id": "s10", "st": "Em Andamento"}, {"k": 3, "p": "Conexão Corporativa", "t": "Selecionar contas estratégicas", "d": "Classificar clientes pelo Health Score. Priorizar maiores contratos, maior risco ou maior potencial de expansão. Conhecer o histórico desses clientes.", "r": "Karina e Karyne", "q": "1º Trimestre", "o": "", "id": "s11", "st": "Em Andamento"}, {"k": 3, "p": "Conexão Corporativa", "t": "Criar sistemática de visitas corporativas focadas em governança e valor", "d": "Criar sistemática visitas focadas em governança e valor, criar pauta específica para corporativos: Revisão de processos; Mapeamento de melhorias; Avaliação de riscos; Propostas de otimização; Oportunidades de novos módulos para retenção.", "r": "Karina e Karyne", "q": "1º Trimestre", "o": "", "id": "s12", "st": "À iniciar"}, {"k": 4, "p": "Logística & Operações", "t": "Planejar rotas trimestrais de visitas, priorizando áreas menos atendidas (iniciando por Sobral 01 e 02)", "d": "", "r": "Karina", "q": "2º Trimestre", "o": "", "id": "s13", "st": "Em Andamento"}, {"k": 4, "p": "Logística & Operações", "t": "Organizar a agenda integrada de CS e Suporte para aplicar o checklist no local", "d": "Organizar e sistematizar a agenda integrada de CS e Suporte para permitir deslocamento de técnicos com capacidade de aplicar o checklist e realizar treinamentos no local", "r": "Letícia", "q": "1º Trimestre", "o": "", "id": "s14", "st": "Em Andamento"}, {"k": 4, "p": "Radar de Usabilidade", "t": "Mapear clientes com urgência de aplicação do checklist (baseado em risco, volume de chamados e baixo uso)", "d": "", "r": "Karina e Karyne", "q": "1º Trimestre", "o": "", "id": "s15", "st": "Em Andamento"}, {"k": 4, "p": "Radar de Usabilidade", "t": "Identificar clientes estratégicos já atendidos e revisar aqueles que precisam de reforço", "d": "", "r": "Karina", "q": "1º Trimestre", "o": "", "id": "s16", "st": "Em Andamento"}], "financeiro": [{"k": 0, "p": "Finalizar projeto análise da inadimplência", "t": "Finalizar a análise aprofundada da inadimplência", "d": "Finalizar projeto que está no PDI da analista - Fazer uma análise mais aprofundada a respeito dos nossos resultados de inadimplência: mercado com maior %, perfil de cliente, datas que impactam e etc Verficar se os clinetes nuvem skyone pagam com prazo de menos de 15 dias", "r": "Jaiane", "q": "1º Trimestre", "o": "", "id": "f1", "st": "Em Andamento"}, {"k": 0, "p": "Finalizar projeto análise da inadimplência", "t": "Fazer plano de ação para melhoria de acordo com os dados levantados", "d": "", "r": "Iza + Jaiane", "q": "1º Trimestre", "o": "", "id": "f2", "st": "Em Andamento"}, {"k": 0, "p": "Estruturar política de cobranças preventivas e monitoramento com clientes específicos", "t": "Enviar alertas de pré-vencimento com apoio do estagiário", "d": "Com o apoio de um estagiário no setor, enviar alertas de pré-vencimento (3, 7 e 10 dias antes)", "r": "Jaiane + Mariely", "q": "1º Trimestre", "o": "Alinhado com o setor: enviar o lembrete dois dias antes e no dia do vencimento do boleto. Iniciar em fev. 10 dias antes é muito e algumas datas talvez não daria certo pq o faturamento ainda não estaria feito e não teríamos o link", "id": "f3", "st": "Em Andamento"}, {"k": 0, "p": "Estruturar política de cobranças preventivas e monitoramento com clientes específicos", "t": "Monitorar clientes com histórico de atraso", "d": "Manter contato proativo com o mesmo.", "r": "Izabelly", "q": "1º Trimestre", "o": "", "id": "f4", "st": "À iniciar"}, {"k": 0, "p": "Estruturar política de cobranças preventivas e monitoramento com clientes específicos", "t": "Criar algum tipo de bônus para clientes adimplentes", "d": "", "r": "Izabelly", "q": "3º Trimestre", "o": "", "id": "f5", "st": "À iniciar"}, {"k": 1, "p": "Auditoria dos custos administrativos atuais", "t": "Revisar detalhadamente quais os maiores tipos de despesas do ano de 2025", "d": "", "r": "Izabelly", "q": "1º Trimestre", "o": "Planilha Análise de Custos 2025 (\\\\10.50.26.4\\Arquivos\\FORTES TECNOLOGIA\\Financeiro_Fortes\\01_GERAL\\Indicadores e performance\\Análises financeiras)", "id": "f6", "st": "Concluído"}, {"k": 1, "p": "Auditoria dos custos administrativos atuais", "t": "Identificar oportunidades de redução de custos e acompanhar", "d": "Identificar oportunidades de redução e acompanhar (ex: mat. expediente, copa)", "r": "Izabelly", "q": "1º Trimestre", "o": "Oportunidades: material de expediente, copa, linhas da claro. Acompanhar.", "id": "f7", "st": "Em Andamento"}, {"k": 1, "p": "Revisão de contratos e assinaturas ativas", "t": "Analisar contratos e assinaturas ativas (usabilidade, planos disponíveis)", "d": "", "r": "Izabelly", "q": "1º Trimestre", "o": "", "id": "f8", "st": "Em Andamento"}, {"k": 1, "p": "Revisão de contratos e assinaturas ativas", "t": "Renegociar ou trocar fornecedores com melhor custo x benefício", "d": "Tentar renegociar ou buscar fornecedores que atendam as demandas e tenha custo x benefício melhor", "r": "Izabelly", "q": "1º Trimestre", "o": "", "id": "f9", "st": "Em Andamento"}, {"k": 1, "p": "Recuperar R$30.000,00 do valor principal de negativados", "t": "Buscar fornecedores para cobrança de clientes com +60 dias", "d": "Procurar fornecedores para cobrança de clientes com +60 dias (ex: Probank) e analisar custo x benefício", "r": "Izabelly", "q": "4º Trimestre", "o": "Dan tentando pegar orçamento com a Probank", "id": "f10", "st": "Em Andamento"}, {"k": 1, "p": "Recuperar R$30.000,00 do valor principal de negativados", "t": "Rever regras de negociação atuais", "d": "Rever regras de negociações atuais", "r": "Izabelly", "q": "1º Trimestre", "o": "", "id": "f11", "st": "Em Andamento"}, {"k": 1, "p": "Recuperar R$30.000,00 do valor principal de negativados", "t": "Criar campanhas de negociação mais atrativas e assertivas", "d": "Criar campanhas de negociações mais atrativas e assertivas (garantir que chegue nas pessoas certas)", "r": "Izabelly", "q": "4º Trimestre", "o": "Calendário de campanhas: março - mês do consumidor | junho - final de semestre | julho - aniv Fortes | out - Pré Black | dez - final de ano", "id": "f12", "st": "À iniciar"}, {"k": 2, "p": "Estruturação de previsibilidade financeira dentro da planilha Controle Financeiro", "t": "Estruturar previsibilidade da área comercial na planilha de Controle Financeiro", "d": "Estruturar, dentro da planilha do controle financeiro, junto com a gerência, uma previsibilidade para área comercial, considerando histórico e padrão de comportamento da área", "r": "Izabelly", "q": "1º Trimestre", "o": "Cobrar ao Felipe, alinhado de repassar pra gente", "id": "f13", "st": "Concluído"}, {"k": 2, "p": "Estruturação de previsibilidade financeira dentro da planilha Controle Financeiro", "t": "Estruturar controle diário de previsto x realizado", "d": "Estruturar, dentro da planilha do controle financeiro, um controle de previstoxrealizado - saldo das receitas e despesas, por dia", "r": "Izabelly", "q": "1º Trimestre", "o": "Alinhado com a equipe já. Dan ficará responsável por mudar na planilha", "id": "f14", "st": "Concluído"}, {"k": 2, "p": "Criar ritual de reunião financeira mensal com times envolvidos (Financeiro + Sucesso + Comercial)", "t": "Comparar real x projetado", "d": "", "r": "Izabelly", "q": "2º Trimestre", "o": "", "id": "f15", "st": "Em Andamento"}, {"k": 2, "p": "Criar ritual de reunião financeira mensal com times envolvidos (Financeiro + Sucesso + Comercial)", "t": "Identificar desvios e registrar ações para correção", "d": "", "r": "Izabelly", "q": "2º Trimestre", "o": "", "id": "f16", "st": "À iniciar"}], "rh": [{"k": 0, "p": "Finalizar trilhas de onboarding para todos os setores da empresa", "t": "Levantar com os gestores e validar a trilha de onboarding de cada cargo", "d": "Fazer levantamento com os gestores das principais necessidades de treinamento para um novo colaborador, em cada cargo, fazer sugestão de trilha e validar com o gestor", "r": "Iza + Rayane", "q": "2º Trimestre", "o": "Suporte Fortes - OK, Suporte F5 - OK, CS F5 - OK", "id": "r1", "st": "Concluído"}, {"k": 0, "p": "Finalizar trilhas de onboarding para todos os setores da empresa", "t": "Realizar a reintegração dos colaboradores", "d": "Realizar \"reeintegração\" dos colaboradores de acordo com o que foi validado", "r": "Iza + Rayane", "q": "2º Trimestre", "o": "alterado a estratégia - ter um momento de reeintegração sobre RH/DP.", "id": "r2", "st": "Cancelado"}, {"k": 0, "p": "Realizar trilha por setores", "t": "Mapear competências e temas com os gestores para o cronograma de treinamentos", "d": "Mapear principais competências/temas, com os gestores, para construir cronograma de treinamento para o tri", "r": "Iza + Rayane", "q": "1º Trimestre", "o": "Ação Urna do Desenvolvimento - aplicação inicial com os gestores, posteriormente com os demais.", "id": "r3", "st": "Concluído"}, {"k": 0, "p": "Realizar trilha por setores", "t": "Realizar treinamentos conforme combinado", "d": "", "r": "Iza + Rayane", "q": "4º Trimestre", "o": "", "id": "r4", "st": "Em Andamento"}, {"k": 1, "p": "Implantar ciclo de conversas de carreira", "t": "Avaliação de experiência feita pelo RH com o colaborador", "d": "RH realizar avaliação de experiência com o colaborador (não ficar apenas a avaliação do gestor), a fim de entender como está o processo de onboarding", "r": "Rayane", "q": "1º Trimestre", "o": "Avaliação já validada, cadastrada no RH e apresentada para os colaboradores.", "id": "r5", "st": "Concluído"}, {"k": 1, "p": "Implantar ciclo de conversas de carreira", "t": "Implantar agenda trimestral de conversas de carreira", "d": "Podemos fazer um guia prático para os líderes. Fazer registro de expectativas e próximos passos.", "r": "Iza", "q": "2º Trimestre", "o": "", "id": "r6", "st": "Concluído"}, {"k": 1, "p": "Revisar entrevistas de desligamento dos últimos 2 anos", "t": "Analisar entrevistas de desligamento e entender se há pontos de melhoria sob nosso controle", "d": "", "r": "Iza", "q": "2º Trimestre", "o": "", "id": "r7", "st": "Concluído"}, {"k": 1, "p": "Revisar entrevistas de desligamento dos últimos 2 anos", "t": "Categorizar motivos de desligamento e criar plano de ação por causa", "d": "Categorizar principais motivos motivos (liderança, salário, carga de trabalho, cultura etc.) e criar plano de ações por causa principal (ex: estudar aumento de bolsa, treinamento para líderes, carga horária)", "r": "Iza", "q": "2º Trimestre", "o": "", "id": "r8", "st": "Concluído"}, {"k": 2, "p": "Fazer rodadas de eNPS trimestrais", "t": "Definir calendário e aplicar pesquisa simples + espaço para comentários", "d": "", "r": "Iza + Rayane", "q": "1º Trimestre", "o": "Validada a pesquisa. Iniciaremos em março.", "id": "r9", "st": "Concluído"}, {"k": 2, "p": "Fazer rodadas de eNPS trimestrais", "t": "Consolidar relatório e fazer análise dos resultados", "d": "", "r": "Iza", "q": "2º Trimestre", "o": "", "id": "r10", "st": "Concluído"}, {"k": 3, "p": "Criar campanhas para incentivo de cadastro de currículos para banco de talentos", "t": "Mapear quais cargos são prioridades para fazer banco e alinhar com gestores/gerência principais requisitos", "d": "", "r": "Iza + gestores", "q": "1º Trimestre", "o": "", "id": "r11", "st": "À iniciar"}, {"k": 3, "p": "Criar campanhas para incentivo de cadastro de currículos para banco de talentos", "t": "Fazer artes para incentivar o cadastro. Postar nas redes sociais", "d": "insta, linkedIN. (Ex: temos vaga / cadastre no banco de talentos)", "r": "Iza + mkt", "q": "1º Trimestre", "o": "Motivo registrado: Validar com o Felipe se fazemos por setor ou por cargo. Modelo: vem ser #timenew.", "id": "r12", "st": "Pendente"}, {"k": 3, "p": "Criar campanhas para incentivo de cadastro de currículos para banco de talentos", "t": "Criar conteúdos sobre cultura e depoimentos de colaboradores", "d": "Criar conteúdos em sobre cultura, divulgar mais nossas ações, projetos: Busar depoimento de colaboradores sobre como é trabalhar na Fortes e F5. Alinhar com o Neto.", "r": "Iza + mkt", "q": "2º Trimestre", "o": "", "id": "r13", "st": "Em Andamento"}, {"k": 3, "p": "Buscar parcerias e apoiar a divulgação do Trabalhe Conosco em eventos", "t": "Mapear faculdades e contatos de coordenações de curso que estejam alinhados ao nosso perfil", "d": "Fazer lista e compartilhar artes feitas no projeto 1 (digital e online)", "r": "Iza + Rayane", "q": "2º Trimestre", "o": "", "id": "r14", "st": "Concluído"}, {"k": 3, "p": "Buscar parcerias e apoiar a divulgação do Trabalhe Conosco em eventos", "t": "Criar material impresso do Trabalhe Conosco com QR code", "d": "Fazer um material (cartão, folha A4) personalizado - com qr code, site, chamada - para usarmos impresso junto com outros materiais de divulgação da empresa . Ex: quando dermos pastas de brindes nos eventos, colocar o material junto", "r": "Rayane", "q": "1º Trimestre", "o": "", "id": "r15", "st": "Concluído"}, {"k": 3, "p": "Programa - Indicou, fechou, ganhou!", "t": "Criar regras do programa de indicação", "d": "Criar regras (incentivo financeiro - ex: um valor no VR ou reconhecimento) para quem indicar pelo menos 2 currículos qualificados e a vaga ser fechada por um deles.", "r": "Iza", "q": "4º Trimestre", "o": "", "id": "r16", "st": "À iniciar"}, {"k": 3, "p": "Programa - Indicou, fechou, ganhou!", "t": "Divulgar internamente e acompanhar resultado", "d": "", "r": "Iza", "q": "4º Trimestre", "o": "", "id": "r17", "st": "À iniciar"}, {"k": 3, "p": "Implementar rotina interna no RH para acompanhamento e triagem dos currículos cadastrados recentemente", "t": "Acompanhar, mensalmente, os currículos cadastrados naquele mês e fazer triagem", "d": "Inserir no campo \"obs do RH\" setor para banco.", "r": "Rayane", "q": "3º Trimestre", "o": "", "id": "r18", "st": "À iniciar"}, {"k": 3, "p": "Atualização geral dos currículos do banco", "t": "Fazer atualização geral do banco de currículos", "d": "Triar todos os currículos que não participaram de nenhum processo seletivo e inserir em \"obs: Rh\" informações para futuras vagas. Criar um código para identificar (ex. auditoria 2026). Excluir cadastros duplicados.", "r": "Iza + Rayane", "q": "3º Trimestre", "o": "", "id": "r19", "st": "À iniciar"}], "comercial": [{"id": "a1", "k": 0, "p": "Oportunidades Fortes", "t": "Qualificação mais rigorosa (pré-vendas forte)", "d": "Implantar roteiro padrão de Discovery (SPIN, GPCT, BANT, mapeamento de decisores, etc.) estruturar o CRM", "r": "", "q": "1º Trimestre", "o": "", "st": "À iniciar"}, {"id": "a2", "k": 0, "p": "Oportunidades Fortes", "t": "Definir critérios claros da oportunidade de acordo com ICP de cada mercado", "d": "Pesquisas através da plataforma Econodata analisando ICP ideal para cada mercado: Mercado Corporativo: Escritórios de Contabilidade CNAE principal: \"6920601 - Atividades de contabilidade 6920602 - Atividades de consultoria e auditoria contábil e tributáriaIncluídas Atividades Secundárias\" Porte: 3 a 8 usuários ativos no sistema Perfil de gestão: Escritório estruturado, em crescimento, buscando eficiência e redução de retrabalho Necessidade principal: Centralização da gestão contábil, RH e financeiro; confiabilidade nos prazos fiscais Empresas de médio a grande porte CNAE principal: \"Indústria: 10 a 33 (transformação alimentícia, têxtil, metalurgia, etc.). Saúde: 8610-1/01 (Atividades hospitalares). Educação: 8511-2/00 (Ensino fundamental), 8531-7/00 (Ensino superior). Serviços grandes: 5611-2/01 (restaurantes), 4711-3/02 (hipermercados).\" Porte:Mais de 150 colaboradores Perfil de gestão: RH estruturado e com foco em indicadores (turnover, absenteísmo, folha, ponto, clima organizacional) Necessidade principal: Sistemas integrados de RH, folha, ponto e gestão de talentos", "r": "", "q": "1º Trimestre", "o": "", "st": ""}, {"id": "a3", "k": 0, "p": "Oportunidades Fortes", "t": "Criar score de qualificação integrado ao CRM Nectar", "d": "Criar score de qualificação integrado ao CRM Nectar classificando obrigatoriamente leads em oportunidades fria, morna, quente e muito quente, aumentando a assertividade do pipeline.", "r": "", "q": "1º Trimestre", "o": "", "st": "À iniciar"}, {"id": "a4", "k": 0, "p": "Projeto Alta Performance", "t": "Padronizar playbook de demonstração consultiva por segmento (Contábil e Corporativo)", "d": "Roteiro com dores do ICP, provas sociais, diferenciais e ROI, garantindo consistência na abordagem.", "r": "", "q": "1º Trimestre", "o": "", "st": "À iniciar"}, {"id": "a5", "k": 0, "p": "Projeto Alta Performance", "t": "Role plays mensais internos, matriz e com parceiros (F5 Automação e Gateway)", "d": "", "r": "", "q": "1º Trimestre", "o": "", "st": ""}, {"id": "a6", "k": 0, "p": "Projeto Alta Performance", "t": "Aprimorar as análises de Revisão de Propostas (Batimento de Funil Semanal)", "d": "Tornar mais estratégica a revisão das oportunidades de alto valor com o coordenador, analisando objeções, próximos passos e estratégia de fechamento. Tornar prioridade!", "r": "", "q": "1º Trimestre", "o": "", "st": "À iniciar"}, {"id": "a7", "k": 1, "p": "Prospecção Fanática", "t": "Contratação do Consultor de Prospecção e Relacionamento (SDR, BDR e PAP)", "d": "", "r": "Walney", "q": "1º Trimestre", "o": "", "st": "Em Andamento"}, {"id": "a8", "k": 1, "p": "Prospecção Fanática", "t": "Ajustar indicadores de prospecção ativa por canal", "d": "Ajustar indicadores de Prospeções Ativas, subdividindo em Cold Call, Plataformas de Busca de CNPJs, Pesquisa Linkedin, Visitas Comercais, etc.", "r": "", "q": "1º Trimestre", "o": "", "st": "À iniciar"}, {"id": "a9", "k": 1, "p": "Prospecção Fanática", "t": "Aprimorar a operacionalização das Rotas de Prospecção (PAP) nas regiões polos e no entorno de Sobral", "d": "", "r": "", "q": "1º Trimestre", "o": "", "st": ""}, {"id": "a10", "k": 1, "p": "Prospecção Fanática", "t": "Estruturar calendário de rotas de prospecção", "d": "Estruturar calendário de rotas p/ prospecções com planejamento baseado em estudos e concluir até o dia 25 do mês anterior as rotas.", "r": "", "q": "1º Trimestre", "o": "", "st": ""}, {"id": "a11", "k": 1, "p": "Quem não é visto não é lembrado", "t": "Executar calendário estruturado de eventos Contábil e Corporativo", "d": "Realizar 10 eventos contábeis e 4 eventos corporativos na região", "r": "", "q": "", "o": "", "st": "À iniciar"}, {"id": "a12", "k": 1, "p": "Quem não é visto não é lembrado", "t": "Potencializar OPs de redes sociais via conteúdo regional e engajamento da base", "d": "", "r": "", "q": "", "o": "", "st": "À iniciar"}, {"id": "a13", "k": 1, "p": "Projeto Coca Cola", "t": "Agenda Fortes Itinerante", "d": "Esse projeto prevê realização de eventos sobre a Reforma Tributária e será o primeiro grande movimento regional da Fortes no ano, marcando presença nas principais cidades polos, levando conhecimento de alto valor e fortalecendo a marca como referência em inovação, tecnologia e atualização contábil.", "r": "", "q": "1º Trimestre", "o": "", "st": ""}, {"id": "a14", "k": 1, "p": "Projeto Coca Cola", "t": "Definir calendário e reservar auditórios e parcerias locais", "d": "Definir calendário e reservar auditórios/parcerias locais  20/01 a 22/01 - Itapipoca | Acaraú | Camocim | Sobral  27/01 a 30/01 - Itapajé | Tianguá | Crateús", "r": "", "q": "1º Trimestre", "o": "", "st": ""}, {"id": "a15", "k": 1, "p": "Projeto Coca Cola", "t": "Evento macro para 250 pessoas", "d": "Evento realizado em julho de 2026, com tema de alta relevância, palestrantes de renome nacional e abertura para participação de parceiros.  Jullho/2026 - SOBRAL", "r": "", "q": "1º Trimestre", "o": "", "st": ""}, {"id": "a16", "k": 1, "p": "Projeto Coca Cola", "t": "Participar dos eventos da região", "d": "Eventos da Região Participação em todos os eventos realizados pelos órgãos de classe (CRC, Sindicado dos Contabilistas, etc.) Participação com apoio aos principais eventos de instituições de ensino voltados a contabilidade. (Universidades, cursos técnicos, etc.); Participar de eventos de Contadores voltados para seus clientes.", "r": "", "q": "1º Trimestre", "o": "", "st": ""}, {"id": "a17", "k": 1, "p": "Formando Fortes", "t": "Mapear e selecionar instituições parceiras para RH e Financeiro", "d": "Mapear e selecionar instituições parceiras potenciais para RH e Financeiro Identificar escolas técnicas, instituições de ensino profissional e programas de especialização alinhados às áreas de DP, RH e Financeiro.", "r": "", "q": "", "o": "", "st": ""}, {"id": "a18", "k": 1, "p": "Conexão Fortes: Ciclo de Eventos Corporativos", "t": "Conexão Fortes Sobral (trimestral)", "d": "Conexão Fortes Sobral (Trimestral) Evento fixo no auditório da unidade, com tema padrão e foco em empresas de médio porte", "r": "", "q": "", "o": "", "st": ""}, {"id": "a19", "k": 1, "p": "Conexão Fortes: Ciclo de Eventos Corporativos", "t": "Conexão Fortes Regional (Ibiapaba, Crateús, Itapipoca, Acaraú)", "d": "Conexão Fortes Regional (Ibiapaba / Crateús / Itapipoca / Acaraú) Descrição Versão itinerante replicando o mesmo tema do evento de Sobral, na mesma semana. Março: Sobral e Tianguá Jnnho: Sobral e Crateús", "r": "", "q": "", "o": "", "st": ""}, {"id": "a20", "k": 1, "p": "Fortes Business Academy", "t": "Expandir o Fortes Academy para +3 cursos/universidades (Mercado Corporativo)", "d": "Visitas para apresentar aos decisores ou influenciadores o projeto Fortes Academy Corporativo", "r": "Walney", "q": "", "o": "", "st": ""}, {"id": "a21", "k": 1, "p": "Fortes Business Academy", "t": "Estruturar o modelo de parceria com instituições para o mercado corporativo", "d": "Desenvolver e estruturar o modelo de parceria com a instituições voltado ao mercado corporativo. (Ex metodologia, trilhas, ambiente de prática, suporte, etc).", "r": "Walney", "q": "", "o": "", "st": ""}, {"id": "a22", "k": 1, "p": "Fortes Business Academy", "t": "Estruturar o conteúdo apresentado no Fortes Business Academy", "d": "Estruturado o conteúdo que será apresentado no Fortes Business Academy", "r": "Síndel", "q": "", "o": "", "st": ""}, {"id": "a23", "k": 1, "p": "Fortes Business Academy", "t": "Definir versões acadêmicas das soluções e estruturar (certificações, cronograma, etc)", "d": "", "r": "Síndel", "q": "", "o": "", "st": ""}, {"id": "a24", "k": 2, "p": "Fortalecer a Geração de Demanda Qualificada para Sistemas Financeiro e RH", "t": "Estruturar campanhas segmentadas por ICP e segmentos estratégicos", "d": "", "r": "", "q": "1º Trimestre", "o": "", "st": "À iniciar"}, {"id": "a25", "k": 2, "p": "Fortalecer a Geração de Demanda Qualificada para Sistemas Financeiro e RH", "t": "Intensificar o contato com Contadores e Parceiros Indicadores, Consultorias de RH", "d": "", "r": "", "q": "1º Trimestre", "o": "", "st": "À iniciar"}, {"id": "a26", "k": 2, "p": "Elevar a Efetividade Comercial nas Etapas de Demonstração e Negociação", "t": "Implementar Playbook de Demonstração Consultiva por Produto", "d": "Criar roteiro de demonstração específica para Financeiro e RH, destacando casos reais, ROI, ganho operacional e como cada módulo resolve dores críticas.", "r": "", "q": "1º Trimestre", "o": "", "st": "À iniciar"}, {"id": "a27", "k": 2, "p": "Elevar a Efetividade Comercial nas Etapas de Demonstração e Negociação", "t": "Criar Rotina de Acompanhamento Intensivo das Oportunidades de RH e Financeiro", "d": "Reforçar acompanhamento pós-demonstração (D+1 e D+7), mapeando objeções, decisores, orçamento e próximos passos até o fechamento.", "r": "", "q": "1º Trimestre", "o": "", "st": "À iniciar"}, {"id": "a28", "k": 3, "p": "Elevar a Qualidade do Diagnóstico Comercial e da Proposta de Valor", "t": "Desenvolver um roteiro de diagnóstico aprofundado por segmento", "d": "Criar um roteiro obrigatório de diagnóstico para o consultor, verificando processos atuais, volume de operações, maturidade tecnológica e de pessoal, gargalos e potenciais ganhos. O objetivo é identificar necessidades que ampliem o escopo de venda, principalment de soluções com maior valor agregado como Financeiro e RH, aumentando naturalmente o ticket médio.", "r": "", "q": "", "o": "", "st": "À iniciar"}, {"id": "a29", "k": 3, "p": "Elevar a Qualidade do Diagnóstico Comercial e da Proposta de Valor", "t": "Aprimorar a precificação estratégica das oportunidades", "d": "Capacitar a equipe para estruturar propostas com precificação adequada ao porte, complexidade e necessidade real do cliente, considerando margem mínima ideal e alternativas de composição. O objetivo é garantir espaço para negociação controlada, sem comprometer ticket médio, margem ou posicionamento da solução.", "r": "", "q": "", "o": "", "st": "À iniciar"}, {"id": "a30", "k": 3, "p": "Aprimorar a Performance nas Etapas de Demonstração, Negociação e Fechamento", "t": "Realizar demonstrações com ancoragem de valor e comparação de pacotes", "d": "Executar demonstrações sempre apresentando primeiro o pacote ideal (com maior valor e maior aderência ao diagnóstico) e, somente depois, alternativas menores. O objetivo é: Ancorar o cliente no valor mais alto; Reforçar impactos operacionais e financeiros; Elevar a percepção de ganho versus custo", "r": "", "q": "", "o": "", "st": "À iniciar"}, {"id": "a31", "k": 3, "p": "Aprimorar a Performance nas Etapas de Demonstração, Negociação e Fechamento", "t": "Adotar rotina de follow-up com reforço de ROI e captura de compromissos", "d": "Criar uma rotina padrão pós-demonstração com: Mensagem D+1 reforçando ROI e benefícios; Novo contato D+3 para coletar objeções e mapear próximos passos; Follow-up D+7 alinhando solução e validando pacote ideal, sem reduzir ticket prematuramente. O objetivo é manter controle da negociação, reduzir pedidos de desconto e fechar com o pacote mais completo possível.", "r": "", "q": "", "o": "", "st": "À iniciar"}, {"id": "a32", "k": 3, "p": "Profissionalizar o Processo de Prospecção Outbound", "t": "Criar listas inteligentes de prospecção por ICP e Região", "d": "Construir listas mensais segmentadas com dados atualizados por porte, segmento e localização (Sobral, Metropolitana e Polos Regionais). Essas listas servirão de base para as campanhas de ligação, WhatsApp, e-mail e rotas presenciais.", "r": "", "q": "", "o": "", "st": "À iniciar"}, {"id": "a33", "k": 3, "p": "Profissionalizar o Processo de Prospecção Outbound", "t": "Aprimorar a cadência de prospecção ativa do consultor CDCR", "d": "Aprimorar a cadência de prospecção ativa do Consultor de Desenvolvimento Comercial e Relacionamneto Ajustar e consolidar a cadência semanal e mensal de outbound: ligações, rotas presenciais, follow-ups, LinkedIn e contatos via parceiros, garantindo volume suficiente para atingir a meta mensal de leads qualificados.", "r": "", "q": "", "o": "", "st": "À iniciar"}, {"id": "a34", "k": 3, "p": "Estruturar Rotinas de Qualificação e Conversão de Outbound em Oportunidades", "t": "Implantar um protocolo padrão de qualificação (pré-reunião)", "d": "Criar um checklist de qualificação para validar: decisor, dores reais, porte, volume operacional, urgência e aderência ao ICP. O Consultor \"CDCR\". só encaminha ao Consultor Pleno quando todos os critérios estiverem atendidos.", "r": "", "q": "", "o": "", "st": "À iniciar"}, {"id": "a35", "k": 3, "p": "Estruturar Rotinas de Qualificação e Conversão de Outbound em Oportunidades", "t": "Estabelecer rotina de agendamento semanal para o Consultor Pleno", "d": "Definir meta semanal de reuniões qualificadas a serem agendadas (9 corporativo e 4 contábil). O Consultor \"CDCR\" deverá priorizar oportunidades quentes e agendar reuniões diretamente na agenda do Consultor Pleno.", "r": "", "q": "", "o": "", "st": "À iniciar"}]};
+const SETORES = {
+ comercial:{nome:"Comercial Fortes",gestor:"Walney Albuquerque",krs:[
+  {curto:"Taxa de conversão",texto:"Garantir a taxa de conversão de clientes novos para o mínimo de 30% no Contábil e 35% no Corporativo",campos:[{id:"cont",label:"Conversão Contábil",un:"%",meta:30},{id:"corp",label:"Conversão Corporativo",un:"%",meta:35}]},
+  {curto:"Geração de demanda",texto:"Gerar 500 novas oportunidades no ano, com 300 leads qualificados corporativos e 200 contábeis via outbound",campos:[{id:"opp",label:"Novas oportunidades",un:"",meta:500},{id:"lcorp",label:"Leads qualificados Corporativo",un:"",meta:300},{id:"lcont",label:"Leads qualificados Contábil",un:"",meta:200}]},
+  {curto:"Financeiro e RH",texto:"Vender 4 Fortes Financeiro e 4 Fortes RH no ano",campos:[{id:"fin",label:"Fortes Financeiro vendidos",un:"",meta:4},{id:"rh",label:"Fortes RH vendidos",un:"",meta:4}]},
+  {curto:"Ticket médio",texto:"Garantir ticket médio mínimo de R$ 370 no Corporativo e R$ 320 no Contábil em recorrentes de clientes novos",campos:[{id:"tcorp",label:"Ticket médio Corporativo",un:"R$",meta:370},{id:"tcont",label:"Ticket médio Contábil",un:"R$",meta:320}]}]},
+ suporte:{nome:"Suporte/CS Fortes",gestor:"Síndel Vitória",krs:[
+  {curto:"Tempo de espera",texto:"Reduzir o tempo médio de espera na fila para 5 minutos",campos:[{id:"tme",label:"Tempo médio de espera",un:"min",meta:5,dir:"min"}]},
+  {curto:"CSAT",texto:"Manter o CSAT maior que 97%",campos:[{id:"csat",label:"CSAT médio",un:"%",meta:97}]},
+  {curto:"Resolução no 1º contato",texto:"Aumentar a resolução no 1º contato para 85%",campos:[{id:"res",label:"Resolução no 1º contato",un:"%",meta:85}]},
+  {curto:"Visitas de CS",texto:"Realizar visitas de CS trimestrais em 20% da base corporativa e 30% da contábil (140 clientes visitados por trimestre)",campos:[{id:"vis",label:"Média de clientes visitados por trimestre",un:"",meta:140}]},
+  {curto:"Checklist de usabilidade",texto:"Executar o Checklist de Usabilidade em 100% dos contadores até dezembro",campos:[{id:"chk",label:"Contadores com checklist aplicado",un:"%",meta:100}]}]},
+ financeiro:{nome:"Financeiro Fortes",gestor:"Izabelly Alves",krs:[
+  {curto:"Inadimplência",texto:"Manter a inadimplência abaixo de 12%",campos:[{id:"inad",label:"Inadimplência média do ano",un:"%",meta:12,dir:"min"}]},
+  {curto:"Lucratividade",texto:"Atingir lucratividade de 11,6% do faturamento ou R$ 385 mil nominais",hist:"Meta alinhada à revisão dos objetivos gerais: original de 11% ou R$ 285 mil, revisada para 12,9% ou R$ 375 mil e depois para 11,6% ou R$ 385 mil.",campos:[{id:"luc",label:"Lucratividade sobre o faturamento",un:"%",meta:11.6,orig:11},{id:"lucv",label:"Lucro nominal",un:"R$",meta:385000,orig:285000}]},
+  {curto:"Previsto x realizado",texto:"Ter assertividade de 95% no previsto x realizado mensal do Controle Financeiro",campos:[{id:"ass",label:"Assertividade média",un:"%",meta:95}]}]},
+ rh:{nome:"RH Fortes/F5",gestor:"Izabelly Alves",krs:[
+  {curto:"Trilhas por cargo",texto:"Implantar trilha de desenvolvimento por cargo até o 3º trimestre",campos:[{id:"tri",label:"Cargos com trilha implantada",un:"%",meta:100}]},
+  {curto:"Turnover voluntário",texto:"Reduzir o turnover voluntário para menos de 50%",campos:[{id:"to",label:"Turnover voluntário no ano",un:"%",meta:50,dir:"min"}]},
+  {curto:"eNPS",texto:"Medir o eNPS interno e obter média de +50",campos:[{id:"enps",label:"eNPS médio",un:"",meta:50}]},
+  {curto:"Banco de talentos",texto:"Criar banco de talentos com no mínimo 3 currículos qualificados por vaga",campos:[{id:"bt",label:"Média de currículos qualificados por vaga",un:"",meta:3}]}]}
+};
+SETORES.geral={nome:"Objetivos gerais da Fortes",gestor:"Felipe Maximo, gerente",krs:[
+  {curto:"Faturamento total",texto:"Atingir R$ 2,61 milhões de faturamento total em 2026",hist:"Meta original de R$ 2,6 mi, revisada para R$ 2,73 mi e depois para R$ 2,61 mi.",rel:"Comercial (conversão, geração de demanda, Financeiro e RH, ticket médio) e Financeiro (inadimplência)",campos:[{id:"fat",label:"Faturamento total em 2026",un:"R$",meta:2610000,orig:2600000}]},
+  {curto:"Mercado corporativo",texto:"Ampliar a participação de mercado no corporativo em +10%",rel:"Comercial (geração de demanda, conversão) e Suporte/CS (visitas de CS)",campos:[{id:"mkt",label:"Crescimento da participação no corporativo",un:"%",meta:10}]},
+  {curto:"Churn",texto:"Reduzir o churn para menos de 1,5% do faturamento",rel:"Suporte/CS (tempo de espera, CSAT, resolução no 1º contato, visitas, checklist de usabilidade)",campos:[{id:"churn",label:"Churn sobre o faturamento",un:"%",meta:1.5,dir:"min"}]},
+  {curto:"Lucratividade",texto:"Atingir lucratividade de 11,6% do faturamento ou R$ 385 mil nominais",hist:"Meta original de 11% ou R$ 285 mil, revisada para 12,9% ou R$ 375 mil e depois para 11,6% ou R$ 385 mil.",rel:"Financeiro (lucratividade, previsto x realizado, inadimplência)",campos:[{id:"luc",label:"Lucratividade sobre o faturamento",un:"%",meta:11.6,orig:11},{id:"lucv",label:"Lucro nominal",un:"R$",meta:385000,orig:285000}]}]};
+DATA.geral=[];
+const ORDEM=["geral","comercial","suporte","financeiro","rh"];
+const REAL=["Sim","Parcialmente","Não"];
+const MOTIVOS=["Ainda em andamento","Falta de tempo da equipe","Mudança de prioridade","Dependia de outro setor","Falta de recurso ou orçamento","Falta de dado ou ferramenta","Foi cancelada","Foi substituída por outra ação","Foi modificada (feita de outra forma)","Outro"];
+const SUBS={"Foi substituída por outra ação":["Qual ação foi feita no lugar?","Descreva a ação que substituiu a planejada"],"Foi modificada (feita de outra forma)":["O que mudou na ação?","Descreva como a ação foi feita"]};
+const FUT=["Manter","Ajustar","Descartar"];
+const COM={"Sim":"Descreva o que foi realizado","Parcialmente":"Descreva o que foi realizado até agora"};
+const KRFUT=["Manter","Ajustar a meta","Trocar o KR","Excluir"];
+const FONTES=["Sistema ou CRM","Planilha de controle","Relatório do setor","Estimativa"];
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* tema */
+const TKEY="okr-aval-tema";
+function temaAtual(){const t=document.documentElement.dataset.theme;return t||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");}
+try{const t=localStorage.getItem(TKEY);if(t)document.documentElement.dataset.theme=t;}catch(e){}
+const SUN='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+const MOON='<svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>';
+function iconeTema(){const b=document.getElementById("tema");const d=temaAtual()==="dark";b.innerHTML=d?SUN:MOON;b.setAttribute("aria-label",d?"Usar tema claro":"Usar tema escuro");b.title=b.getAttribute("aria-label");}
+
+/* estado */
+let CONS=false,SET=null,KRS=[],ACOES=[],SCR=[],S=null;
+const key=s=>"okr-aval-2026-v4-"+s;
+function preDaPlanilha(a){const o=a.o&&!a.o.startsWith("Motivo registrado")?a.o:"";
+ if(a.st==="Concluído")return {real:"Sim",com:o,pre:a.st};
+ if(a.st==="Em Andamento")return {real:"Parcialmente",com:o,mot:"Ainda em andamento",pre:a.st};
+ if(a.st==="Cancelado")return o?{real:"Não",mot:"Foi modificada (feita de outra forma)",sub:o,pre:a.st}:{real:"Não",mot:"Foi cancelada",pre:a.st};
+ if(a.st==="Pendente")return {real:"Não",pre:a.st};
+ return null;}
+function load(s){let st={a:{},k:{},extras:[""],aprend:"",pos:0},loc=null;try{const r=localStorage.getItem(key(s));if(r)loc=JSON.parse(r);}catch(e){}
+ if(REMOTO[s]){st=Object.assign(st,JSON.parse(JSON.stringify(REMOTO[s])));if(loc&&loc.pos!=null)st.pos=loc.pos;}else if(loc)st=Object.assign(st,loc);
+ DATA[s].forEach(a=>{if(!st.a[a.id]){const p=preDaPlanilha(a);if(p)st.a[a.id]=p;}});return st;}
+let tSave;
+const save=()=>{if(!SET)return;try{localStorage.setItem(key(SET),JSON.stringify(S));}catch(e){}
+ if(!sb)return;const setor=SET,dados=JSON.parse(JSON.stringify(S));delete dados.pos;REMOTO[setor]=dados;syncStatus("salvando");clearTimeout(tSave);
+ tSave=setTimeout(async()=>{const {error}=await sb.from("okr_avaliacoes").upsert({ciclo:CICLO,setor,respostas:dados,atualizado_em:new Date().toISOString()},{onConflict:"ciclo,setor"});syncStatus(error?"erro":"salvo");},700);};
+function abrir(s){
+ CONS=s==="consolidado";if(!SETORES[s]){SET=null;render();window.scrollTo({top:0});if(CONS&&sb)baixarTudo().then(()=>{if(CONS)render();});return;}
+ SET=s;KRS=SETORES[s].krs;ACOES=DATA[s];S=load(s);SCR=[];
+ KRS.forEach((k,i)=>{if(s!=="geral")SCR.push({t:"kr",k:i});ACOES.filter(a=>a.k===i).forEach(a=>SCR.push({t:"ac",id:a.id,k:i}));SCR.push({t:"res",k:i});});
+ SCR.push({t:"extra"},{t:"sum"});if(S.pos>=SCR.length)S.pos=0;render();window.scrollTo({top:0});
+}
+const A=id=>S.a[id]||(S.a[id]={});
+const KR=i=>S.k[i]||(S.k[i]={v:{}});
+const fmt=(un,v)=>v===""||v==null||isNaN(v)?"":un==="R$"?"R$ "+Number(v).toLocaleString("pt-BR"):un==="%"?Number(v).toLocaleString("pt-BR")+"%":un==="min"?Number(v).toLocaleString("pt-BR")+" min":Number(v).toLocaleString("pt-BR");
+const fmtMeta=c=>(c.dir==="min"?"até ":"")+fmt(c.un,c.meta);
+const bate=(c,v)=>c.dir==="min"?Number(v)<=c.meta:Number(v)>=c.meta;
+const vazio=v=>v===""||v==null;
+const hint=(c,v)=>vazio(v)?`Meta: ${fmtMeta(c)}`:(bate(c,v)?"Meta atingida":"Meta não atingida")+` (meta ${fmtMeta(c)})`;
+const hintCls=(c,v)=>vazio(v)?"":bate(c,v)?"ok":"bad";
+const opts=(n,list,val)=>`<div class="opts" role="radiogroup">${list.map(o=>`<button type="button" class="opt${val===o?" on":""}" data-n="${n}" data-v="${esc(o)}" role="radio" aria-checked="${val===o}">${esc(o)}</button>`).join("")}</div>`;
+function acDone(id){return acDoneIn(S,id);}
+function acDoneIn(S,id){const a=S.a[id];if(!a||!a.real)return false;if(COM[a.real]&&!(a.com||"").trim())return false;if(a.real!=="Sim"&&!a.mot)return false;if(SUBS[a.mot]&&!(a.sub||"").trim())return false;return true;}
+
+function scrHome(){
+ return `<div class="card big"><h2>Avaliação dos OKRs 2026</h2>
+ <p class="desc">Escolha o seu setor. Você vai revisar cada ação planejada para 2026, uma de cada vez, e informar o resultado alcançado em cada KR. As respostas ficam salvas e você pode continuar depois.</p>
+ <div class="sets">${ORDEM.map(s=>{const st=load(s),l=DATA[s],n=l.filter(a=>acDoneIn(st,a.id)).length,pre=l.filter(a=>(st.a[a.id]||{}).pre).length;
+  return `<button class="set" data-set="${s}"><div><b>${esc(SETORES[s].nome)}</b><span>${esc(SETORES[s].gestor)}, ${SETORES[s].krs.length} KRs${l.length?` e ${l.length} ações`:" que influenciam todos os setores"}</span></div><span class="st">${l.length?(n?`${n} de ${l.length} avaliadas`:"Não iniciada"):(()=>{const m=SETORES[s].krs.filter((k,i)=>st.k[i]&&(Object.values(st.k[i].v||{}).some(v=>v!==""&&v!=null)||Object.values(st.k[i].nd||{}).some(Boolean))).length;return m?`${m} de ${SETORES[s].krs.length} KRs`:"Não iniciada";})()}${pre?`<br>${pre} pré-preenchidas`:""}</span></button>`;}).join("")}</div>
+ <button class="btn pri" data-set="consolidado" style="width:100%;margin-top:16px">Ver visão consolidada</button></div>`;
+}
+function krStatus(k,x){x=x||{};const v=x.v||{},nd=x.nd||{};
+ const vals=k.campos.filter(c=>!vazio(v[c.id]));
+ if(!vals.length)return Object.values(nd).some(Boolean)?"nd":"nr";
+ const oks=vals.map(c=>bate(c,v[c.id]));
+ return (k.curto==="Lucratividade"?oks.some(Boolean):oks.every(Boolean))?"ok":"bad";}
+const ST_LBL={ok:"Atingido",bad:"Não atingido",nd:"Sem medição",nr:"Sem resposta"};
+const ST_CLS={ok:"ok",bad:"bad",nd:"warn",nr:"off"};
+function realizadoTxt(k,x){x=x||{};return k.campos.map(c=>((x.nd||{})[c.id])?"não medido":vazio((x.v||{})[c.id])?"–":fmt(c.un,x.v[c.id])).join(" / ");}
+function scrCons(){
+ const col={Sim:"var(--ok)",Parcialmente:"var(--warn)","Não":"var(--bad)"};
+ const all=ORDEM.map(s=>({s,cfg:SETORES[s],st:load(s),ac:DATA[s]}));
+ let ta=0,c={Sim:0,Parcialmente:0,"Não":0},kc={ok:0,bad:0,nd:0,nr:0},mot={},ndL=[],revL=[],sugL=[],foraL=[];
+ all.forEach(({s,cfg,st,ac})=>{ta+=ac.length;ac.forEach(a=>{const x=st.a[a.id]||{};if(x.real)c[x.real]++;if(x.mot&&x.mot!=="Ainda em andamento")mot[x.mot]=(mot[x.mot]||0)+1;});
+  cfg.krs.forEach((k,i)=>{const x=st.k[i]||{};kc[krStatus(k,x)]++;
+   if(Object.values(x.nd||{}).some(Boolean))ndL.push([cfg.nome,k.curto,x.ndobs]);
+   if(x.rev==="Sim")revL.push([cfg.nome,k.curto,x.revobs]);
+   if(x.fut||x.sug)sugL.push([cfg.nome,k.curto,x.fut,x.sug]);});
+  (st.extras||[]).filter(e=>e&&e.trim()).forEach(e=>foraL.push([cfg.nome,e]));});
+ const tk=kc.ok+kc.bad+kc.nd+kc.nr,p=n=>ta?Math.round(n/ta*100):0;
+ const g=all[0];
+ const geral=`<div class="sec"><h3>Objetivos gerais</h3><div class="tbl"><table><thead><tr><th>KR</th><th>Meta</th><th>Realizado</th><th></th><th>Setores que mais contribuíram</th></tr></thead><tbody>
+  ${g.cfg.krs.map((k,i)=>{const x=g.st.k[i]||{},st=krStatus(k,x);return `<tr><td>${esc(k.curto)}</td><td>${k.campos.map(fmtMeta).join(" ou ")}</td><td>${realizadoTxt(k,x)}</td><td><span class="pill ${ST_CLS[st]}">${ST_LBL[st]}</span></td><td>${esc((x.contrib||[]).join(", ")||"–")}</td></tr>`;}).join("")}</tbody></table></div></div>`;
+ const setores=`<div class="sec"><h3>Por setor</h3><p class="desc" style="margin:-4px 0 12px;font-size:13px">Clique em um setor para ver os KRs.</p>
+  ${all.slice(1).map(({s,cfg,st,ac})=>{const n=ac.filter(a=>acDoneIn(st,a.id)).length,ok=cfg.krs.filter((k,i)=>krStatus(k,st.k[i])==="ok").length;
+   const bar=`<div class="bar">${REAL.map(r=>{const m=ac.filter(a=>(st.a[a.id]||{}).real===r).length;return m?`<i style="width:${m/ac.length*100}%;background:${col[r]}"></i>`:"";}).join("")}</div>`;
+   return `<details class="kd cs"><summary class="br"><span><b style="font-weight:600">${esc(cfg.nome)}</b><br><small>${n} de ${ac.length} ações avaliadas</small></span>${bar}<span>${ok} de ${cfg.krs.length} KRs</span></summary>
+    <div class="tbl" style="margin:6px 0 16px"><table><thead><tr><th>KR</th><th>Meta</th><th>Realizado</th><th></th><th>Para 2027</th></tr></thead><tbody>
+    ${cfg.krs.map((k,i)=>{const x=st.k[i]||{},stt=krStatus(k,x),l=ac.filter(a=>a.k===i),ex=l.filter(a=>(st.a[a.id]||{}).real==="Sim").length;
+      return `<tr><td>${esc(k.curto)}<br><small>${l.length?`${ex} de ${l.length} ações realizadas`:"sem ações"}${x.rev==="Sim"?", meta revisada":""}</small></td><td>${k.campos.map(fmtMeta).join(k.curto==="Lucratividade"?" ou ":" / ")}</td><td>${realizadoTxt(k,x)}</td><td><span class="pill ${ST_CLS[stt]}">${ST_LBL[stt]}</span></td><td>${esc(x.fut||"–")}</td></tr>`;}).join("")}
+    </tbody></table><button class="btn link" data-set="${s}" style="color:var(--pri);padding:8px 0">Abrir avaliação do setor</button></div></details>`;}).join("")}</div>`;
+ const mk=Object.entries(mot).sort((a,b)=>b[1]-a[1]),mm=mk.length?mk[0][1]:1;
+ const motivos=`<div class="sec"><h3>Por que ações não foram concluídas</h3>${mk.length?mk.map(([m,n])=>`<div class="br nop"><span>${esc(m)}</span><div class="bar"><i style="width:${n/mm*100}%;background:var(--warn)"></i></div><span>${n}</span></div>`).join(""):`<p class="desc">Nenhum motivo registrado ainda.</p>`}</div>`;
+ const lista=(t,l,f)=>`<div class="sec"><h3>${t}</h3>${l.length?`<ul class="clist">${l.map(f).join("")}</ul>`:`<p class="desc">Nada registrado ainda.</p>`}</div>`;
+ return `<div class="card"><div class="ctx"><b>Visão consolidada</b></div><h2>Fechamento dos OKRs 2026</h2>
+  <p class="desc">Resultado de todos os setores e dos objetivos gerais.</p>
+  <div class="boxes b5"><div class="box"><div class="v">${p(c.Sim)}%</div><div class="k">das ${ta} ações realizadas</div></div>
+   <div class="box"><div class="v">${p(c.Parcialmente)}%</div><div class="k">parciais</div></div>
+   <div class="box"><div class="v">${p(c["Não"])}%</div><div class="k">não realizadas</div></div>
+   <div class="box"><div class="v">${kc.ok}<small> de ${tk}</small></div><div class="k">KRs atingidos</div></div>
+   <div class="box"><div class="v">${kc.nd}</div><div class="k">KRs sem medição</div></div></div>
+  ${geral}${setores}${motivos}
+  ${lista("Indicadores sem medição",ndL,([a,b,o])=>`<li><b>${esc(b)}</b> <small>${esc(a)}</small>${o?`<p>${esc(o)}</p>`:""}</li>`)}
+  ${lista("Metas revisadas pelos setores",revL,([a,b,o])=>`<li><b>${esc(b)}</b> <small>${esc(a)}</small>${o?`<p>${esc(o)}</p>`:""}</li>`)}
+  ${lista("Sugestões para 2027",sugL,([a,b,f,o])=>`<li><b>${esc(b)}</b> <small>${esc(a)}</small><p>${esc(f||"")}${f&&o?": ":""}${esc(o||"")}</p></li>`)}
+  ${lista("Feito fora do plano",foraL,([a,e])=>`<li>${esc(e)} <small>${esc(a)}</small></li>`)}
+  <p class="note">${sb?"Respostas de todos os gestores, atualizadas ao abrir esta tela.":"Protótipo visual: mostra as respostas registradas neste navegador."}</p></div>`;}
+
+function scrKR(i){const k=KRS[i],n=ACOES.filter(a=>a.k===i).length;
+ return `<div class="card big"><div class="ctx"><b>KR ${i+1} de ${KRS.length}</b></div><h2>${esc(k.texto)}</h2>
+  <ul class="metas">${k.campos.map(c=>`<li><span>${esc(c.label)}</span><b>${fmtMeta(c)}</b></li>`).join("")}</ul>
+  <p class="desc">${n?`Você vai avaliar as ${n} ações planejadas para este KR, uma de cada vez. No final, informa o resultado alcançado.`:`Este KR não teve ações planejadas na planilha. Na próxima tela, informe apenas o resultado alcançado.`}</p></div>`;}
+function scrAc(id){const a=ACOES.find(x=>x.id===id),s=S.a[id]||{},list=ACOES.filter(x=>x.k===a.k),idx=list.indexOf(a)+1;
+ const motOn=s.real&&s.real!=="Sim";
+ return `<div class="card"><div class="ctx"><b>KR ${a.k+1}</b>, ${esc(KRS[a.k].curto)}, ação ${idx} de ${list.length}</div>
+  <div class="macro">Projeto: ${esc(a.p)}</div>
+  <h2>${esc(a.t)}</h2>
+  ${a.d?`<button class="more" data-more>Ver o que foi planejado</button><p class="desc hide" id="det">${esc(a.d)}</p>`:""}
+  <p class="plan">Planejado para ${esc(a.q||"trimestre não definido")}${a.r?`, responsável ${esc(a.r)}`:""}</p>
+  ${s.pre?`<div class="obs">Resposta pré-preenchida com o status da planilha (${esc(s.pre)}). Revise e edite o que for necessário.</div>`:""}
+  ${a.o&&a.o!==s.com&&a.o!==s.sub?`<div class="obs">Anotação na planilha: ${esc(a.o)}</div>`:""}
+  <div class="q"><span class="ql">Esta ação foi realizada?</span>${opts("real",REAL,s.real)}</div>
+  <div class="q${COM[s.real]?"":" hide"}" id="qcom"><label class="ql" for="com" id="lcom">${COM[s.real]||""}</label><textarea id="com" data-f="com" placeholder="Explique o que foi entregue e como">${esc(s.com)}</textarea></div>
+  <div class="q${motOn?"":" hide"}" id="qmot"><label class="ql" for="mot">Qual foi o principal motivo?</label>
+   <select id="mot" data-f="mot"><option value="">Selecione</option>${MOTIVOS.map(m=>`<option${s.mot===m?" selected":""}>${m}</option>`).join("")}</select></div>
+  <div class="q${SUBS[s.mot]?"":" hide"}" id="qsub"><label class="ql" for="sub" id="lsub">${SUBS[s.mot]?SUBS[s.mot][0]:""}</label><textarea id="sub" data-f="sub" placeholder="${SUBS[s.mot]?esc(SUBS[s.mot][1]):""}">${esc(s.sub)}</textarea></div>
+</div>`;}
+function scrRes(i){const k=KRS[i],ks=KR(i);
+ return `<div class="card"><div class="ctx"><b>KR ${i+1}</b>, resultado</div><h2>Quanto foi alcançado em 2026?</h2>
+  <p class="desc">${esc(k.texto)}. Informe o resultado acumulado (ou a média) de janeiro até hoje.</p>
+  ${k.rel?`<div class="obs">Influenciado pelos KRs de: ${esc(k.rel)}</div>`:""}
+  ${k.hist?`<div class="obs">Meta revisada nas revisões trimestrais. ${esc(k.hist)}</div>`:""}
+  ${k.campos.map(c=>`<div class="f"><label class="ql" for="v-${c.id}">${esc(c.label)}${c.un?` (${c.un})`:""}</label>
+   <input type="number" inputmode="decimal" step="any" id="v-${c.id}" data-kv="${c.id}" value="${esc(ks.v[c.id])}"${(ks.nd||{})[c.id]?" disabled":""}><div class="hint ${hintCls(c,ks.v[c.id])}${(ks.nd||{})[c.id]?" hide":""}" id="h-${c.id}">${hint(c,ks.v[c.id])}</div>
+   <label class="nd"><input type="checkbox" data-nd="${c.id}"${(ks.nd||{})[c.id]?" checked":""}> Não temos esse dado</label></div>`).join("")}
+  <div class="q${Object.values(ks.nd||{}).some(Boolean)?"":" hide"}" id="qnd"><label class="ql" for="ndobs">Por que esse dado não é medido? Como poderia ser medido em 2027?</label><textarea id="ndobs" data-kf="ndobs" placeholder="Ex.: o CRM não registra a etapa de qualificação; seria preciso padronizar o funil">${esc(ks.ndobs)}</textarea></div>
+  <div class="f"><label class="ql" for="fonte">De onde vem esse número?</label><select id="fonte" data-kf="fonte"><option value="">Selecione</option>${FONTES.map(o=>`<option${ks.fonte===o?" selected":""}>${o}</option>`).join("")}</select></div>
+  ${SET==="geral"?`<div class="q"><span class="ql">Quais setores mais contribuíram para este resultado? (pode marcar mais de um)</span><div class="opts">${["Comercial","Suporte/CS","Financeiro","RH"].map(o=>`<button type="button" class="opt${(ks.contrib||[]).includes(o)?" on":""}" data-mc="${o}" aria-pressed="${(ks.contrib||[]).includes(o)}">${o}</button>`).join("")}</div></div>
+  <div class="q"><label class="ql" for="inf">O que mais influenciou o resultado, positiva ou negativamente?</label><textarea id="inf" data-kf="inf" placeholder="Ex.: queda de conversão no contábil no 2º semestre, aumento de cancelamentos por preço">${esc(ks.inf)}</textarea></div>`:""}
+  ${SET!=="geral"?`<div class="q"><span class="ql">A meta deste KR foi revisada em alguma revisão trimestral?</span>${opts("krev",["Não","Sim"],ks.rev)}</div>
+  <div class="q${ks.rev==="Sim"?"":" hide"}" id="qrev"><label class="ql" for="revobs">Qual foi a nova meta e em qual trimestre?</label><textarea id="revobs" data-kf="revobs" placeholder="Ex.: no 2º tri, a meta passou de 30% para 28%">${esc(ks.revobs)}</textarea></div>`:""}
+  <div class="q"><span class="ql">Para 2027, este KR deve:</span>${opts("kfut",KRFUT,ks.fut)}</div>
+  <div class="q"><label class="ql" for="sug">Sugestão para 2027 (opcional)</label><textarea id="sug" data-kf="sug" placeholder="Nova meta, novo indicador ou observação">${esc(ks.sug)}</textarea></div></div>`;}
+function scrExtra(){return `<div class="card"><div class="ctx"><b>Fechamento</b></div><h2>O que foi feito em 2026 que não estava no plano?</h2>
+  <p class="desc">Iniciativas relevantes que aconteceram fora do planejamento também contam como resultado do ano.</p>
+  <div class="q">${S.extras.map((e,j)=>`<div class="ex"><input type="text" data-ex="${j}" value="${esc(e)}" placeholder="Descreva a iniciativa" aria-label="Iniciativa ${j+1}">${S.extras.length>1?`<button class="x" data-rm="${j}" aria-label="Remover">×</button>`:""}</div>`).join("")}</div>
+  <button class="btn link" id="add" style="color:var(--pri)">Adicionar outra</button>
+  <div class="q"><label class="ql" for="apr">Principal aprendizado de 2026 (opcional)</label><textarea id="apr" data-ap>${esc(S.aprend)}</textarea></div></div>`;}
+function scrSum(){const tot=ACOES.length,c={Sim:0,Parcialmente:0,"Não":0};ACOES.forEach(a=>{const v=(S.a[a.id]||{}).real;if(v)c[v]++;});
+ const p=n=>tot?Math.round(n/tot*100):0,col={Sim:"var(--ok)",Parcialmente:"var(--warn)","Não":"var(--bad)"};
+ const ex=S.extras.filter(e=>e.trim());
+ const subs=ACOES.filter(a=>{const x=S.a[a.id]||{};return SUBS[x.mot]&&(x.sub||"").trim();});
+ const pend=ACOES.filter(a=>!acDone(a.id)).length;
+ return `<div class="card${ACOES.length?"":" sem-acoes"}"><div class="ctx"><b>Resumo</b></div><h2>Avaliação: ${esc(SETORES[SET].nome)}</h2>
+  ${pend?`<p class="desc">${pend} ${pend>1?"ações ainda estão incompletas":"ação ainda está incompleta"}. Você pode voltar e completar.</p>`:""}
+  <div class="boxes"><div class="box"><div class="v">${p(c.Sim)}%</div><div class="k">realizadas</div></div><div class="box"><div class="v">${p(c.Parcialmente)}%</div><div class="k">parciais</div></div><div class="box"><div class="v">${p(c["Não"])}%</div><div class="k">não realizadas</div></div></div>
+  <div class="sec sec-exec"><h3>Execução por KR</h3><p class="desc" style="margin:-4px 0 12px;font-size:13px">Clique em um KR para ver as ações.</p>${KRS.map((k,i)=>{const l=ACOES.filter(a=>a.k===i);
+   if(!l.length)return `<div class="br nop"><span>${esc(k.curto)}</span><div class="bar"></div><span>sem ações</span></div>`;
+   const ok=l.filter(a=>(S.a[a.id]||{}).real==="Sim").length;
+   const bar=`<div class="bar">${REAL.map(r=>{const n=l.filter(a=>(S.a[a.id]||{}).real===r).length;return n?`<i style="width:${n/l.length*100}%;background:${col[r]}"></i>`:"";}).join("")}</div>`;
+   const itens=l.map(a=>{const x=S.a[a.id]||{},r=x.real||"";const lbl={Sim:"Realizada",Parcialmente:"Parcial","Não":"Não realizada"}[r]||"Sem resposta";
+     const det=r==="Não"?[x.mot,x.sub].filter(Boolean).join(": "):[x.com,r==="Parcialmente"&&x.mot&&x.mot!=="Ainda em andamento"?"Motivo: "+x.mot:""].filter(Boolean).join(" ");
+     return `<li data-go-ac="${a.id}"><i class="dot" style="background:${col[r]||"var(--line)"}"></i><div><b>${esc(a.t)}</b><span class="tag">${lbl}</span>${det?`<p>${esc(det)}</p>`:""}</div></li>`;}).join("");
+   return `<details class="kd"><summary class="br"><span>${esc(k.curto)}</span>${bar}<span>${ok} de ${l.length}</span></summary><ul class="itens">${itens}</ul></details>`;}).join("")}</div>
+  <div class="sec"><h3>Resultado dos KRs</h3><div class="tbl"><table><thead><tr><th>Indicador</th><th>Meta</th><th>Realizado</th><th></th></tr></thead><tbody>
+  ${KRS.map((k,i)=>k.campos.map(cp=>{const v=(S.k[i]||{v:{}}).v[cp.id],h=!vazio(v),ok=h&&bate(cp,v);
+   const nd=((S.k[i]||{}).nd||{})[cp.id];
+   return `<tr><td>${esc(cp.label)}</td><td>${fmtMeta(cp)}${cp.orig!=null?`<br><span style="font-size:12px;color:var(--muted)">original ${fmt(cp.un,cp.orig)}</span>`:""}</td><td>${nd?"Não medido":h?fmt(cp.un,v):"–"}</td><td><span class="pill ${nd?"warn":!h?"off":ok?"ok":"bad"}">${nd?"Sem medição":!h?"Sem resposta":ok?"Atingida":"Não atingida"}</span></td></tr>`;}).join("")).join("")}
+  </tbody></table></div></div>
+  ${(()=>{const l=KRS.map((k,i)=>[k,S.k[i]||{}]).filter(([k,x])=>Object.values(x.nd||{}).some(Boolean));return l.length?`<div class="sec"><h3>Indicadores sem medição</h3><ul style="margin:0;padding-left:18px">${l.map(([k,x])=>`<li style="margin-bottom:8px"><b style="font-weight:500">${esc(k.curto)}</b>${x.ndobs?`<br><span style="color:var(--muted);font-size:13.5px">${esc(x.ndobs)}</span>`:""}</li>`).join("")}</ul></div>`:"";})()}
+  ${SET==="geral"?`<div class="sec"><h3>Contribuição dos setores</h3><ul style="margin:0;padding-left:18px">${KRS.map((k,i)=>{const x=S.k[i]||{};return `<li style="margin-bottom:8px"><b style="font-weight:500">${esc(k.curto)}:</b> ${esc((x.contrib||[]).join(", ")||"não informado")}${x.inf?`<br><span style="color:var(--muted);font-size:13.5px">${esc(x.inf)}</span>`:""}</li>`;}).join("")}</ul></div>`:""}
+  ${subs.length?`<div class="sec"><h3>Ações substituídas ou modificadas</h3><ul style="margin:0;padding-left:18px">${subs.map(a=>`<li><b style="font-weight:500">${esc(a.t)}</b><br><span style="color:var(--muted);font-size:13.5px">${S.a[a.id].mot.startsWith("Foi substituída")?"Substituída por: ":"Mudança: "}${esc(S.a[a.id].sub)}</span></li>`).join("")}</ul></div>`:""}
+  ${ex.length?`<div class="sec"><h3>Feito fora do plano</h3><ul style="margin:0;padding-left:18px">${ex.map(e=>`<li>${esc(e)}</li>`).join("")}</ul></div>`:""}
+  <p class="note">${sb?"As respostas são salvas automaticamente.":"Protótipo visual: as respostas ficam salvas apenas neste navegador."} <button class="btn link" id="reset" style="padding:0;font-size:12.5px;text-decoration:underline">Apagar respostas deste setor</button></p></div>`;}
+
+function render(){
+ const sc=document.getElementById("screen");
+ document.body.classList.toggle("wide",CONS);const tr=document.getElementById("trocar");
+ if(CONS){sc.innerHTML=`<div class="screen">${scrCons()}</div>`;document.getElementById("bar").style.width="0";document.getElementById("pos").textContent="";document.getElementById("titulo").textContent="Visão consolidada";tr.textContent="Voltar aos setores";tr.classList.remove("hide");return;}
+ tr.textContent="Trocar setor";
+ if(!SET){sc.innerHTML=`<div class="screen">${scrHome()}</div>`;document.getElementById("bar").style.width="0";document.getElementById("pos").textContent="";document.getElementById("titulo").textContent="Fortes Tecnologia";document.getElementById("trocar").classList.add("hide");return;}
+ const s=SCR[S.pos];
+ const html=s.t==="kr"?scrKR(s.k):s.t==="ac"?scrAc(s.id):s.t==="res"?scrRes(s.k):s.t==="extra"?scrExtra():scrSum();
+ const last=S.pos===SCR.length-1;
+ const nextLbl=s.t==="kr"?"Começar":s.t==="extra"?"Ver resumo":s.t==="res"&&s.k<KRS.length-1?"Ir para o próximo KR":"Próximo";
+ sc.innerHTML=`<div class="screen">${html}<div class="nav"><button class="btn link" data-go="-1" ${S.pos===0?"disabled":""}>Voltar</button>${last?"":`<button class="btn pri" data-go="1">${nextLbl}</button>`}</div></div>`;
+ document.getElementById("bar").style.width=(S.pos/(SCR.length-1)*100)+"%";
+ document.getElementById("pos").textContent=s.k!=null?`KR ${s.k+1} de ${KRS.length}`:"";
+ document.getElementById("titulo").textContent=SETORES[SET].nome;
+ document.getElementById("trocar").classList.remove("hide");
+}
+function toast(t){const e=document.getElementById("toast");e.textContent=t;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),1900);}
+function go(d){const s=SCR[S.pos];
+ if(d>0&&s.t==="ac"){const a=S.a[s.id]||{};
+  if(!a.real)return toast("Responda se a ação foi realizada para continuar.");
+  if(COM[a.real]&&!(a.com||"").trim())return toast("Descreva o que foi realizado para continuar.");
+  if(a.real!=="Sim"&&!a.mot)return toast("Selecione o principal motivo para continuar.");
+  if(SUBS[a.mot]&&!(a.sub||"").trim())return toast("Descreva a ação que foi substituída ou modificada.");}
+ S.pos=Math.max(0,Math.min(SCR.length-1,S.pos+d));save();render();window.scrollTo({top:0});}
+
+document.addEventListener("click",e=>{const li=e.target.closest("[data-go-ac]");if(li&&SET){S.pos=SCR.findIndex(x=>x.id===li.dataset.goAc);save();render();window.scrollTo({top:0});return;}
+ const b=e.target.closest("button");if(!b)return;
+ if(b.id==="tema"){const n=temaAtual()==="dark"?"light":"dark";document.documentElement.dataset.theme=n;try{localStorage.setItem(TKEY,n);}catch(x){}iconeTema();return;}
+ if(b.dataset.set){location.hash=b.dataset.set;return;}
+ if(b.id==="trocar"){history.pushState("",document.title,location.pathname+location.search);SET=null;CONS=false;render();return;}
+ if(!SET)return;const s=SCR[S.pos];
+ if(b.dataset.go)return go(+b.dataset.go);
+ if(b.hasAttribute("data-more")){const d=document.getElementById("det");d.classList.toggle("hide");b.textContent=d.classList.contains("hide")?"Ver o que foi planejado":"Ocultar detalhes";return;}
+ if(b.dataset.mc){const ks=KR(s.k);ks.contrib=ks.contrib||[];const v=b.dataset.mc,ix=ks.contrib.indexOf(v);if(ix<0)ks.contrib.push(v);else ks.contrib.splice(ix,1);b.classList.toggle("on",ix<0);b.setAttribute("aria-pressed",ix<0);save();return;}
+ if(b.dataset.n){const n=b.dataset.n,v=b.dataset.v;let obj,f;
+  if(n==="kfut"){obj=KR(s.k);f="fut";}else if(n==="krev"){obj=KR(s.k);f="rev";}else{obj=A(s.id);f=n;}
+  obj[f]=obj[f]===v?"":v;
+  b.parentElement.querySelectorAll(".opt").forEach(o=>{const on=o.dataset.v===obj[f];o.classList.toggle("on",on);o.setAttribute("aria-checked",on);});
+  if(n==="krev")document.getElementById("qrev").classList.toggle("hide",obj.rev!=="Sim");
+  if(n==="real"){const show=obj.real&&obj.real!=="Sim";
+   document.getElementById("qcom").classList.toggle("hide",!COM[obj.real]);document.getElementById("lcom").textContent=COM[obj.real]||"";
+   document.getElementById("qmot").classList.toggle("hide",!show);
+   if(!show){obj.mot="";obj.sub="";document.getElementById("mot").value="";document.getElementById("sub").value="";document.getElementById("qsub").classList.add("hide");}}
+  save();return;}
+ if(b.id==="add"){S.extras.push("");save();render();const ins=document.querySelectorAll("[data-ex]");ins[ins.length-1].focus();return;}
+ if(b.dataset.rm!=null){S.extras.splice(+b.dataset.rm,1);save();render();return;}
+ if(b.id==="reset"&&confirm("Apagar as respostas deste setor? As respostas vindas da planilha serão restauradas.")){try{localStorage.removeItem(key(SET));}catch(x){}delete REMOTO[SET];S=load(SET);save();render();}
+});
+document.addEventListener("input",e=>{if(!SET)return;const t=e.target,s=SCR[S.pos];
+ if(t.dataset.f){A(s.id)[t.dataset.f]=t.value;
+  if(t.dataset.f==="mot"){const m=SUBS[t.value];document.getElementById("qsub").classList.toggle("hide",!m);if(m){document.getElementById("lsub").textContent=m[0];document.getElementById("sub").placeholder=m[1];}}}
+ else if(t.dataset.nd){const ks=KR(s.k),id=t.dataset.nd;ks.nd=ks.nd||{};ks.nd[id]=t.checked;const inp=document.getElementById("v-"+id);inp.disabled=t.checked;if(t.checked){inp.value="";ks.v[id]="";}document.getElementById("h-"+id).classList.toggle("hide",t.checked);document.getElementById("qnd").classList.toggle("hide",!Object.values(ks.nd).some(Boolean));}
+ else if(t.dataset.kv){const id=t.dataset.kv,c=KRS[s.k].campos.find(x=>x.id===id);KR(s.k).v[id]=t.value;const h=document.getElementById("h-"+id);h.textContent=hint(c,t.value);h.className="hint "+hintCls(c,t.value);}
+ else if(t.dataset.kf){KR(s.k)[t.dataset.kf]=t.value;}
+ else if(t.dataset.ex!=null){S.extras[+t.dataset.ex]=t.value;}
+ else if(t.hasAttribute("data-ap")){S.aprend=t.value;}
+ save();});
+window.addEventListener("hashchange",()=>abrir(location.hash.slice(1)));
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change",iconeTema);
+iconeTema();
+if(sb){document.getElementById("screen").innerHTML='<div class="card"><p class="desc">Carregando avaliações...</p></div>';baixarTudo().finally(()=>abrir(location.hash.slice(1)));}
+else abrir(location.hash.slice(1));
+
+</script>
+</body>
+</html>
