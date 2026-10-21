@@ -222,7 +222,7 @@ const empDe=s=>Object.keys(EMPRESAS).find(e=>EMPRESAS[e].setores.includes(s));
 const LEGADO={nexxus_rh:"rh"};
 const REAL=["Sim","Parcialmente","Não"];
 const MOTIVOS=["Ainda em andamento","Falta de tempo da equipe","Mudança de prioridade","Dependia de outro setor","Falta de recurso ou orçamento","Falta de dado ou ferramenta","Foi cancelada","Foi substituída por outra ação","Foi modificada (feita de outra forma)","Outro"];
-const SUBS={"Foi substituída por outra ação":["Qual ação foi feita no lugar?","Descreva a ação que substituiu a planejada"],"Foi modificada (feita de outra forma)":["O que mudou na ação?","Descreva como a ação foi feita"]};
+const SUBS={"Foi substituída por outra ação":["Descreva o que foi feito no lugar","Qual ação foi feita no lugar da planejada","Por que a ação foi substituída?","Ex.: mudança de prioridade, falta de recurso, outra ação traria mais resultado"],"Foi modificada (feita de outra forma)":["Descreva o que foi feito de outra forma","Como a ação foi feita, no lugar do que estava planejado","Por que a ação foi feita de outra forma?","Ex.: o plano original não era viável, mudou o responsável ou a ferramenta"]};
 const FUT=["Manter","Ajustar","Descartar"];
 const COM={"Sim":"Descreva o que foi realizado","Parcialmente":"Descreva o que foi realizado até agora"};
 const KRFUT=["Manter","Ajustar a meta","Trocar o KR","Excluir"];
@@ -273,7 +273,7 @@ const hint=(c,v)=>c.meta==null?"Meta ainda não definida":vazio(v)?`Meta: ${fmtM
 const hintCls=(c,v)=>c.meta==null||vazio(v)?"":bate(c,v)?"ok":"bad";
 const opts=(n,list,val)=>`<div class="opts" role="radiogroup">${list.map(o=>`<button type="button" class="opt${val===o?" on":""}" data-n="${n}" data-v="${esc(o)}" role="radio" aria-checked="${val===o}">${esc(o)}</button>`).join("")}</div>`;
 function acDone(id){return acDoneIn(S,id);}
-function acDoneIn(S,id){const a=S.a[id];if(!a||!a.real)return false;if(COM[a.real]&&!(a.com||"").trim())return false;if(a.real!=="Sim"&&!a.mot)return false;if(SUBS[a.mot]&&!(a.sub||"").trim())return false;return true;}
+function acDoneIn(S,id){const a=S.a[id];if(!a||!a.real)return false;if(COM[a.real]&&!(a.com||"").trim())return false;if(a.real!=="Sim"&&!a.mot)return false;if(SUBS[a.mot]&&(!(a.sub||"").trim()||!(a.why||"").trim()))return false;return true;}
 
 function secCard(s){const st=load(s),l=DATA[s],cfg=SETORES[s],n=l.filter(a=>acDoneIn(st,a.id)).length,pre=l.filter(a=>(st.a[a.id]||{}).pre).length;
  const stat=l.length?(n?`${n} de ${l.length} avaliadas`:"Não iniciada"):(()=>{const m=cfg.krs.filter((k,i)=>st.k[i]&&(Object.values(st.k[i].v||{}).some(v=>v!==""&&v!=null)||Object.values(st.k[i].nd||{}).some(Boolean))).length;return m?`${m} de ${cfg.krs.length} KRs`:"Não iniciada";})();
@@ -362,6 +362,7 @@ function scrAc(id){const a=ACOES.find(x=>x.id===id),s=S.a[id]||{},list=ACOES.fil
   <div class="q${motOn?"":" hide"}" id="qmot"><label class="ql" for="mot">Qual foi o principal motivo?</label>
    <select id="mot" data-f="mot"><option value="">Selecione</option>${MOTIVOS.map(m=>`<option${s.mot===m?" selected":""}>${m}</option>`).join("")}</select></div>
   <div class="q${SUBS[s.mot]?"":" hide"}" id="qsub"><label class="ql" for="sub" id="lsub">${SUBS[s.mot]?SUBS[s.mot][0]:""}</label><textarea id="sub" data-f="sub" placeholder="${SUBS[s.mot]?esc(SUBS[s.mot][1]):""}">${esc(s.sub)}</textarea></div>
+  <div class="q${SUBS[s.mot]?"":" hide"}" id="qwhy"><label class="ql" for="why" id="lwhy">${SUBS[s.mot]?SUBS[s.mot][2]:""}</label><textarea id="why" data-f="why" placeholder="${SUBS[s.mot]?esc(SUBS[s.mot][3]):""}">${esc(s.why)}</textarea></div>
 </div>`;}
 function scrRes(i){const k=KRS[i],ks=KR(i);
  return `<div class="card"><div class="ctx"><b>KR ${i+1}</b>, resultado</div><h2>Quanto foi alcançado em 2026?</h2>
@@ -398,7 +399,7 @@ function scrSum(){const tot=ACOES.length,c={Sim:0,Parcialmente:0,"Não":0};ACOES
    const ok=l.filter(a=>(S.a[a.id]||{}).real==="Sim").length;
    const bar=`<div class="bar">${REAL.map(r=>{const n=l.filter(a=>(S.a[a.id]||{}).real===r).length;return n?`<i style="width:${n/l.length*100}%;background:${col[r]}"></i>`:"";}).join("")}</div>`;
    const itens=l.map(a=>{const x=S.a[a.id]||{},r=x.real||"";const lbl={Sim:"Realizada",Parcialmente:"Parcial","Não":"Não realizada"}[r]||"Sem resposta";
-     const det=r==="Não"?[x.mot,x.sub].filter(Boolean).join(": "):[x.com,r==="Parcialmente"&&x.mot&&x.mot!=="Ainda em andamento"?"Motivo: "+x.mot:""].filter(Boolean).join(" ");
+     const det=r==="Não"?[x.mot,x.sub].filter(Boolean).join(": ")+(SUBS[x.mot]&&x.why?". Motivo: "+x.why:""):[x.com,r==="Parcialmente"&&x.mot&&x.mot!=="Ainda em andamento"?"Motivo: "+x.mot:""].filter(Boolean).join(" ");
      return `<li data-go-ac="${a.id}"><i class="dot" style="background:${col[r]||"var(--line)"}"></i><div><b>${esc(a.t)}</b><span class="tag">${lbl}</span>${det?`<p>${esc(det)}</p>`:""}</div></li>`;}).join("");
    return `<details class="kd"><summary class="br"><span>${esc(k.curto)}</span>${bar}<span>${ok} de ${l.length}</span></summary><ul class="itens">${itens}</ul></details>`;}).join("")}</div>
   <div class="sec"><h3>Resultado dos KRs</h3><div class="tbl"><table><thead><tr><th>Indicador</th><th>Meta</th><th>Realizado</th><th></th></tr></thead><tbody>
@@ -408,7 +409,7 @@ function scrSum(){const tot=ACOES.length,c={Sim:0,Parcialmente:0,"Não":0};ACOES
   </tbody></table></div></div>
   ${(()=>{const l=KRS.map((k,i)=>[k,S.k[i]||{}]).filter(([k,x])=>Object.values(x.nd||{}).some(Boolean));return l.length?`<div class="sec"><h3>Indicadores sem medição</h3><ul style="margin:0;padding-left:18px">${l.map(([k,x])=>`<li style="margin-bottom:8px"><b style="font-weight:500">${esc(k.curto)}</b>${x.ndobs?`<br><span style="color:var(--muted);font-size:13.5px">${esc(x.ndobs)}</span>`:""}</li>`).join("")}</ul></div>`:"";})()}
   ${SETORES[SET].g?`<div class="sec"><h3>Contribuição dos setores</h3><ul style="margin:0;padding-left:18px">${KRS.map((k,i)=>{const x=S.k[i]||{};return `<li style="margin-bottom:8px"><b style="font-weight:500">${esc(k.curto)}:</b> ${esc((x.contrib||[]).join(", ")||"não informado")}${x.inf?`<br><span style="color:var(--muted);font-size:13.5px">${esc(x.inf)}</span>`:""}</li>`;}).join("")}</ul></div>`:""}
-  ${subs.length?`<div class="sec"><h3>Ações substituídas ou modificadas</h3><ul style="margin:0;padding-left:18px">${subs.map(a=>`<li><b style="font-weight:500">${esc(a.t)}</b><br><span style="color:var(--muted);font-size:13.5px">${S.a[a.id].mot.startsWith("Foi substituída")?"Substituída por: ":"Mudança: "}${esc(S.a[a.id].sub)}</span></li>`).join("")}</ul></div>`:""}
+  ${subs.length?`<div class="sec"><h3>Ações substituídas ou modificadas</h3><ul style="margin:0;padding-left:18px">${subs.map(a=>`<li><b style="font-weight:500">${esc(a.t)}</b><br><span style="color:var(--muted);font-size:13.5px">${S.a[a.id].mot.startsWith("Foi substituída")?"Substituída por: ":"Mudança: "}${esc(S.a[a.id].sub)}${S.a[a.id].why?`<br>Motivo: ${esc(S.a[a.id].why)}`:""}</span></li>`).join("")}</ul></div>`:""}
   ${ex.length?`<div class="sec"><h3>Feito fora do plano</h3><ul style="margin:0;padding-left:18px">${ex.map(e=>`<li>${esc(e)}</li>`).join("")}</ul></div>`:""}
   <p class="note">${sb?"As respostas são salvas automaticamente.":"As respostas ficam salvas neste navegador."} <button class="btn link" id="reset" style="padding:0;font-size:12.5px;text-decoration:underline">Apagar respostas deste setor</button></p></div>`;}
 
@@ -436,7 +437,8 @@ function go(d){const s=SCR[S.pos];
   if(!a.real)return toast("Responda se a ação foi realizada para continuar.");
   if(COM[a.real]&&!(a.com||"").trim())return toast("Descreva o que foi realizado para continuar.");
   if(a.real!=="Sim"&&!a.mot)return toast("Selecione o principal motivo para continuar.");
-  if(SUBS[a.mot]&&!(a.sub||"").trim())return toast("Descreva a ação que foi substituída ou modificada.");}
+  if(SUBS[a.mot]&&!(a.sub||"").trim())return toast("Descreva o que foi feito no lugar ou de outra forma.");
+   if(SUBS[a.mot]&&!(a.why||"").trim())return toast("Explique o motivo da substituição ou da mudança.");}
  S.pos=Math.max(0,Math.min(SCR.length-1,S.pos+d));save();render();window.scrollTo({top:0});}
 
 document.addEventListener("click",e=>{const li=e.target.closest("[data-go-ac]");if(li&&SET){S.pos=SCR.findIndex(x=>x.id===li.dataset.goAc);save();render();window.scrollTo({top:0});return;}
@@ -456,7 +458,7 @@ document.addEventListener("click",e=>{const li=e.target.closest("[data-go-ac]");
   if(n==="real"){const show=obj.real&&obj.real!=="Sim";
    document.getElementById("qcom").classList.toggle("hide",!COM[obj.real]);document.getElementById("lcom").textContent=COM[obj.real]||"";
    document.getElementById("qmot").classList.toggle("hide",!show);
-   if(!show){obj.mot="";obj.sub="";document.getElementById("mot").value="";document.getElementById("sub").value="";document.getElementById("qsub").classList.add("hide");}}
+   if(!show){obj.mot="";obj.sub="";obj.why="";document.getElementById("mot").value="";document.getElementById("sub").value="";document.getElementById("why").value="";document.getElementById("qsub").classList.add("hide");document.getElementById("qwhy").classList.add("hide");}}
   save();return;}
  if(b.id==="add"){S.extras.push("");save();render();const ins=document.querySelectorAll("[data-ex]");ins[ins.length-1].focus();return;}
  if(b.dataset.rm!=null){S.extras.splice(+b.dataset.rm,1);save();render();return;}
@@ -464,7 +466,7 @@ document.addEventListener("click",e=>{const li=e.target.closest("[data-go-ac]");
 });
 document.addEventListener("input",e=>{if(!SET)return;const t=e.target,s=SCR[S.pos];
  if(t.dataset.f){A(s.id)[t.dataset.f]=t.value;
-  if(t.dataset.f==="mot"){const m=SUBS[t.value];document.getElementById("qsub").classList.toggle("hide",!m);if(m){document.getElementById("lsub").textContent=m[0];document.getElementById("sub").placeholder=m[1];}}}
+  if(t.dataset.f==="mot"){const m=SUBS[t.value];document.getElementById("qsub").classList.toggle("hide",!m);document.getElementById("qwhy").classList.toggle("hide",!m);if(m){document.getElementById("lsub").textContent=m[0];document.getElementById("sub").placeholder=m[1];document.getElementById("lwhy").textContent=m[2];document.getElementById("why").placeholder=m[3];}}}
  else if(t.dataset.nd){const ks=KR(s.k),id=t.dataset.nd;ks.nd=ks.nd||{};ks.nd[id]=t.checked;const inp=document.getElementById("v-"+id);inp.disabled=t.checked;if(t.checked){inp.value="";ks.v[id]="";}document.getElementById("h-"+id).classList.toggle("hide",t.checked);document.getElementById("qnd").classList.toggle("hide",!Object.values(ks.nd).some(Boolean));}
  else if(t.dataset.kv){const id=t.dataset.kv,c=KRS[s.k].campos.find(x=>x.id===id);KR(s.k).v[id]=t.value;const h=document.getElementById("h-"+id);h.textContent=hint(c,t.value);h.className="hint "+hintCls(c,t.value);}
  else if(t.dataset.kf){KR(s.k)[t.dataset.kf]=t.value;}
