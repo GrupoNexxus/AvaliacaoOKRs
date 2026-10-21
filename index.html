@@ -207,6 +207,7 @@ const SETORES = {
 SETORES.geral={nome:"Objetivos gerais da Fortes",gestor:"Felipe Maximo, gerente",krs:[
   {curto:"Faturamento total",texto:"Atingir R$ 2,61 milhões de faturamento total em 2026",hist:"Meta original de R$ 2,6 mi, revisada para R$ 2,73 mi e depois para R$ 2,61 mi.",rel:"Comercial (conversão, geração de demanda, Financeiro e RH, ticket médio) e Financeiro (inadimplência)",campos:[{id:"fat",label:"Faturamento total em 2026",un:"R$",meta:2610000,orig:2600000}]},
   {curto:"Mercado corporativo",texto:"Ampliar a participação de mercado no corporativo em +10%",rel:"Comercial (geração de demanda, conversão) e Suporte/CS (visitas de CS)",campos:[{id:"mkt",label:"Crescimento da participação no corporativo",un:"%",meta:10}]},
+  {curto:"Churn",texto:"Reduzir o churn para menos de 1,5% do faturamento",rel:"Suporte/CS (tempo de espera, CSAT, resolução no 1º contato, visitas, checklist de usabilidade)",campos:[{id:"churn",label:"Churn sobre o faturamento",un:"%",meta:1.5,dir:"min"}]},
   {curto:"Lucratividade",ou:true,texto:"Atingir lucratividade de 11,6% do faturamento ou R$ 300 mil nominais",hist:"Meta original de 11% ou R$ 285 mil, revisada para 12,9% ou R$ 375 mil e depois para 11,6% ou R$ 300 mil.",rel:"Financeiro (lucratividade, previsto x realizado, inadimplência)",campos:[{id:"luc",label:"Lucratividade sobre o faturamento",un:"%",meta:11.6,orig:11},{id:"lucv",label:"Lucro nominal",un:"R$",meta:300000,orig:285000}]}]};
 DATA.geral=[];
 SETORES.geral.g=true;SETORES.geral.contrib=["Comercial","Suporte/CS","Financeiro","RH"];
