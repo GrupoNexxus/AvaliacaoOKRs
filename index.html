@@ -170,8 +170,8 @@ input:disabled{opacity:.45}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
 /* ===== CONFIGURAÇÃO DO SUPABASE: cole aqui a URL e a chave anon do projeto ===== */
-const SUPABASE_URL="COLE_AQUI_A_URL_DO_PROJETO";
-const SUPABASE_ANON_KEY="COLE_AQUI_A_CHAVE_ANON";
+const SUPABASE_URL="https://syfhgyeynegpqcobcfzq.supabase.co";
+const SUPABASE_ANON_KEY="sb_publishable_TzTcVL9SyhbPQpWDkAmA1A_E8jCB2MP";
 const CICLO="2026";
 /* ================================================================================ */
 let sb=null,REMOTO={};
@@ -341,7 +341,7 @@ function scrCons(){
   ${lista("Metas revisadas pelos setores",revL,([a,b,o])=>`<li><b>${esc(b)}</b> <small>${esc(a)}</small>${o?`<p>${esc(o)}</p>`:""}</li>`)}
   ${lista("Sugestões para 2027",sugL,([a,b,f,o])=>`<li><b>${esc(b)}</b> <small>${esc(a)}</small><p>${esc(f||"")}${f&&o?": ":""}${esc(o||"")}</p></li>`)}
   ${lista("Feito fora do plano",foraL,([a,e])=>`<li>${esc(e)} <small>${esc(a)}</small></li>`)}
-  <p class="note">${sb?"Respostas de todos os gestores, atualizadas ao abrir esta tela.":"Protótipo visual: mostra as respostas registradas neste navegador."}</p></div>`;}
+  <p class="note">${sb?"Respostas de todos os gestores, atualizadas ao abrir esta tela.":"Mostra as respostas registradas neste navegador."}</p></div>`;}
 
 function scrKR(i){const k=KRS[i],n=ACOES.filter(a=>a.k===i).length;
  return `<div class="card big"><div class="ctx"><b>KR ${i+1} de ${KRS.length}</b></div><h2>${esc(k.texto)}</h2>
@@ -410,7 +410,7 @@ function scrSum(){const tot=ACOES.length,c={Sim:0,Parcialmente:0,"Não":0};ACOES
   ${SETORES[SET].g?`<div class="sec"><h3>Contribuição dos setores</h3><ul style="margin:0;padding-left:18px">${KRS.map((k,i)=>{const x=S.k[i]||{};return `<li style="margin-bottom:8px"><b style="font-weight:500">${esc(k.curto)}:</b> ${esc((x.contrib||[]).join(", ")||"não informado")}${x.inf?`<br><span style="color:var(--muted);font-size:13.5px">${esc(x.inf)}</span>`:""}</li>`;}).join("")}</ul></div>`:""}
   ${subs.length?`<div class="sec"><h3>Ações substituídas ou modificadas</h3><ul style="margin:0;padding-left:18px">${subs.map(a=>`<li><b style="font-weight:500">${esc(a.t)}</b><br><span style="color:var(--muted);font-size:13.5px">${S.a[a.id].mot.startsWith("Foi substituída")?"Substituída por: ":"Mudança: "}${esc(S.a[a.id].sub)}</span></li>`).join("")}</ul></div>`:""}
   ${ex.length?`<div class="sec"><h3>Feito fora do plano</h3><ul style="margin:0;padding-left:18px">${ex.map(e=>`<li>${esc(e)}</li>`).join("")}</ul></div>`:""}
-  <p class="note">${sb?"As respostas são salvas automaticamente.":"Protótipo visual: as respostas ficam salvas apenas neste navegador."} <button class="btn link" id="reset" style="padding:0;font-size:12.5px;text-decoration:underline">Apagar respostas deste setor</button></p></div>`;}
+  <p class="note">${sb?"As respostas são salvas automaticamente.":"As respostas ficam salvas neste navegador."} <button class="btn link" id="reset" style="padding:0;font-size:12.5px;text-decoration:underline">Apagar respostas deste setor</button></p></div>`;}
 
 function render(){
  const sc=document.getElementById("screen"),tr=document.getElementById("trocar");
