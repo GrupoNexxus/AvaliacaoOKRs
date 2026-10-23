@@ -411,7 +411,7 @@ function scrSum(){const tot=ACOES.length,c={Sim:0,Parcialmente:0,"Não":0};ACOES
   ${SETORES[SET].g?`<div class="sec"><h3>Contribuição dos setores</h3><ul style="margin:0;padding-left:18px">${KRS.map((k,i)=>{const x=S.k[i]||{};return `<li style="margin-bottom:8px"><b style="font-weight:500">${esc(k.curto)}:</b> ${esc((x.contrib||[]).join(", ")||"não informado")}${x.inf?`<br><span style="color:var(--muted);font-size:13.5px">${esc(x.inf)}</span>`:""}</li>`;}).join("")}</ul></div>`:""}
   ${subs.length?`<div class="sec"><h3>Ações substituídas ou modificadas</h3><ul style="margin:0;padding-left:18px">${subs.map(a=>`<li><b style="font-weight:500">${esc(a.t)}</b><br><span style="color:var(--muted);font-size:13.5px">${S.a[a.id].mot.startsWith("Foi substituída")?"Substituída por: ":"Mudança: "}${esc(S.a[a.id].sub)}${S.a[a.id].why?`<br>Motivo: ${esc(S.a[a.id].why)}`:""}</span></li>`).join("")}</ul></div>`:""}
   ${ex.length?`<div class="sec"><h3>Feito fora do plano</h3><ul style="margin:0;padding-left:18px">${ex.map(e=>`<li>${esc(e)}</li>`).join("")}</ul></div>`:""}
-  <p class="note">${sb?"As respostas são salvas automaticamente.":"As respostas ficam salvas neste navegador."} <button class="btn link" id="reset" style="padding:0;font-size:12.5px;text-decoration:underline">Apagar respostas deste setor</button></p></div>`;}
+  <p class="note">${sb?"As respostas são salvas automaticamente.":"As respostas ficam salvas neste navegador."}</p></div>`;}
 
 function render(){
  const sc=document.getElementById("screen"),tr=document.getElementById("trocar");
@@ -462,7 +462,6 @@ document.addEventListener("click",e=>{const li=e.target.closest("[data-go-ac]");
   save();return;}
  if(b.id==="add"){S.extras.push("");save();render();const ins=document.querySelectorAll("[data-ex]");ins[ins.length-1].focus();return;}
  if(b.dataset.rm!=null){S.extras.splice(+b.dataset.rm,1);save();render();return;}
- if(b.id==="reset"&&confirm("Apagar as respostas deste setor? As respostas vindas da planilha serão restauradas.")){try{localStorage.removeItem(key(SET));}catch(x){}delete REMOTO[SET];S=load(SET);save();render();}
 });
 document.addEventListener("input",e=>{if(!SET)return;const t=e.target,s=SCR[S.pos];
  if(t.dataset.f){A(s.id)[t.dataset.f]=t.value;
