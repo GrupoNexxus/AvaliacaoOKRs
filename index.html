@@ -118,6 +118,9 @@ input:disabled{opacity:.45}
 .itens b{font-weight:500}
 .itens .tag{display:inline-block;margin-left:8px;font-size:12px;color:var(--muted)}
 .itens p{margin:2px 0 0;color:var(--muted);font-size:13px}
+.itens .rot{font-weight:500;color:var(--ink)}
+.itens p.motv{color:var(--ink)}
+.itens p.motv.sem{color:var(--bad);font-weight:500}
 .sem-acoes .boxes,.sem-acoes .sec-exec{display:none}
 .note{font-size:12.5px;color:var(--muted);margin-top:20px}
 .rs{border-top:1px solid var(--line);margin-top:14px;padding-top:4px}
@@ -462,7 +465,12 @@ function scrExtra(){return `<div class="card"><div class="ctx"><b>Fechamento</b>
   <div class="q">${S.extras.map((e,j)=>`<div class="ex"><input type="text" data-ex="${j}" value="${esc(e)}" placeholder="Descreva a iniciativa" aria-label="Iniciativa ${j+1}">${S.extras.length>1?`<button class="x" data-rm="${j}" aria-label="Remover">×</button>`:""}</div>`).join("")}</div>
   <button class="btn link" id="add" style="color:var(--pri)">Adicionar outra</button>
   <div class="q"><label class="ql" for="apr">Principal aprendizado de 2026 (opcional)</label><textarea id="apr" data-ap>${esc(S.aprend)}</textarea></div></div>`;}
-const detAc=x=>{const r=x.real||"";return r==="Não"?[mt(x),x.sub].filter(Boolean).join(": ")+(SUBS[x.mot]&&x.why?". Motivo: "+x.why:""):[x.com,r==="Parcialmente"&&x.mot&&x.mot!=="Ainda em andamento"?"Motivo: "+mt(x):""].filter(Boolean).join(" ");};
+const detAc=x=>{const r=x.real||"",c=(x.com||"").trim();
+ if(r!=="Parcialmente"&&r!=="Não")return c?`<p>${esc(c)}</p>`:"";
+ let h=c?`<p><span class="rot">O que foi feito:</span> ${esc(c)}</p>`:"";
+ if(SUBS[x.mot]&&(x.sub||"").trim())h+=`<p><span class="rot">${x.mot.startsWith("Foi substituída")?"Substituída por:":"Mudança:"}</span> ${esc(x.sub)}</p>`;
+ h+=x.mot?`<p class="motv"><span class="rot">Motivo:</span> ${esc(mt(x))}${SUBS[x.mot]&&(x.why||"").trim()?`. ${esc(x.why)}`:""}</p>`:`<p class="motv sem">Motivo não informado</p>`;
+ return h;};
 const LBL_AC={Sim:"Realizada",Parcialmente:"Parcial","Não":"Não realizada"};
 const pct=(n,t)=>t?Math.round(n/t*100):0;
 function analiseSetor(cfg,st,ac){const out=[],add=(t,at)=>out.push(`<li${at?' class="at"':""}>${t}</li>`);
@@ -500,7 +508,7 @@ function resumoSetor(s,cfg,st,ac){const col={Sim:"var(--ok)",Parcialmente:"var(-
    if(!l.length)return `<details class="kd"><summary class="br"><span>${esc(k.curto)}</span><div class="bar"></div><span>sem ações</span></summary>${kobs(x)||'<p class="desc" style="font-size:13px;margin:0 0 8px 14px">Sem comentários.</p>'}</details>`;
    const ok=l.filter(a=>(st.a[a.id]||{}).real==="Sim").length;
    const bar=`<div class="bar">${REAL.map(r=>{const n=l.filter(a=>(st.a[a.id]||{}).real===r).length;return n?`<i style="width:${n/l.length*100}%;background:${col[r]}"></i>`:"";}).join("")}</div>`;
-   const itens=l.map(a=>{const y=st.a[a.id]||{},r=y.real||"",d=detAc(y);return `<li class="nc"><i class="dot" style="background:${col[r]||"var(--line)"}"></i><div><b>${esc(a.t)}</b><span class="tag">${LBL_AC[r]||"Sem resposta"}</span>${d?`<p>${esc(d)}</p>`:""}</div></li>`;}).join("");
+   const itens=l.map(a=>{const y=st.a[a.id]||{},r=y.real||"",d=detAc(y);return `<li class="nc"><i class="dot" style="background:${col[r]||"var(--line)"}"></i><div><b>${esc(a.t)}</b><span class="tag">${LBL_AC[r]||"Sem resposta"}</span>${d}</div></li>`;}).join("");
    return `<details class="kd"><summary class="br"><span>${esc(k.curto)}</span>${bar}<span>${ok} de ${l.length}</span></summary>${kobs(x)}<ul class="itens">${itens}</ul></details>`;}).join("")}</div>`;
  const ex=(st.extras||[]).filter(e=>e&&e.trim()),ap=(st.aprend||"").trim();
  const fech=ex.length||ap?`<div class="sec"><h3>Comentários de fechamento</h3><ul class="clist">${ex.map(e=>`<li>${esc(e)} <small>fora do plano</small></li>`).join("")}${ap?`<li><b>Principal aprendizado de 2026</b><p>${esc(ap)}</p></li>`:""}</ul></div>`:"";
@@ -521,8 +529,8 @@ function scrSum(){const tot=ACOES.length,c={Sim:0,Parcialmente:0,"Não":0};ACOES
    const ok=l.filter(a=>(S.a[a.id]||{}).real==="Sim").length;
    const bar=`<div class="bar">${REAL.map(r=>{const n=l.filter(a=>(S.a[a.id]||{}).real===r).length;return n?`<i style="width:${n/l.length*100}%;background:${col[r]}"></i>`:"";}).join("")}</div>`;
    const itens=l.map(a=>{const x=S.a[a.id]||{},r=x.real||"";const lbl={Sim:"Realizada",Parcialmente:"Parcial","Não":"Não realizada"}[r]||"Sem resposta";
-     const det=r==="Não"?[mt(x),x.sub].filter(Boolean).join(": ")+(SUBS[x.mot]&&x.why?". Motivo: "+x.why:""):[x.com,r==="Parcialmente"&&x.mot&&x.mot!=="Ainda em andamento"?"Motivo: "+mt(x):""].filter(Boolean).join(" ");
-     return `<li data-go-ac="${a.id}"><i class="dot" style="background:${col[r]||"var(--line)"}"></i><div><b>${esc(a.t)}</b><span class="tag">${lbl}</span>${det?`<p>${esc(det)}</p>`:""}</div></li>`;}).join("");
+     const det=detAc(x);
+     return `<li data-go-ac="${a.id}"><i class="dot" style="background:${col[r]||"var(--line)"}"></i><div><b>${esc(a.t)}</b><span class="tag">${lbl}</span>${det}</div></li>`;}).join("");
    return `<details class="kd"><summary class="br"><span>${esc(k.curto)}</span>${bar}<span>${ok} de ${l.length}</span></summary><ul class="itens">${itens}</ul></details>`;}).join("")}</div>
   <div class="sec"><h3>Resultado dos KRs</h3><div class="tbl"><table><thead><tr><th>Indicador</th><th>Meta</th><th>Realizado</th><th></th></tr></thead><tbody>
   ${KRS.map((k,i)=>k.campos.map(cp=>{const v=(S.k[i]||{v:{}}).v[cp.id],h=!vazio(v),ok=h&&bate(cp,v),sm=cp.meta==null;
